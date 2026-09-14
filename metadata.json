@@ -1,0 +1,6 @@
+{
+  "name": "GOD'S EYE V2.0",
+  "description": "AI Content Command Center & Cinematic Video Production Studio",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

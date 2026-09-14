@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  --bg-canvas: #090b10;
+  --bg-surface: #0c1017;
+  --bg-card: #121824;
+  --bg-header: rgba(12, 16, 23, 0.92);
+  --border-base: #1e293b;
+  --border-subtle: #141d2c;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #06b6d4;
+  --accent-rgb: 6, 182, 212;
+  --accent-glow: rgba(6, 182, 212, 0.35);
+  --accent-soft: rgba(6, 182, 212, 0.12);
+  --accent-border: rgba(6, 182, 212, 0.4);
+  --hue-shift: 0deg;
+  --sat-shift: 100%;
+  --bright-shift: 100%;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-main);
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+/* Hue shifter filter wrapper */
+#godseye-hue-stage {
+  filter: hue-rotate(var(--hue-shift, 0deg)) saturate(var(--sat-shift, 100%)) brightness(var(--bright-shift, 100%));
+  transition: filter 0.15s ease-out;
+}
+
+/* Accent color utilities */
+.accent-bg {
+  background-color: var(--accent) !important;
+}
+
+.accent-text {
+  color: var(--accent) !important;
+}
+
+.accent-border {
+  border-color: var(--accent) !important;
+}
+
+.accent-border-soft {
+  border-color: var(--accent-border) !important;
+}
+
+.accent-bg-soft {
+  background-color: var(--accent-soft) !important;
+}
+
+.accent-glow-shadow {
+  box-shadow: 0 0 20px var(--accent-glow) !important;
+}
+
+/* Light mode overrides for high contrast readability */
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: #e2e8f0;
+}
+
+/* Custom dark scrollbar for sleek studio look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-base);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
