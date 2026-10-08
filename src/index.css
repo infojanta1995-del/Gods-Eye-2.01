@@ -92,3 +92,37 @@ html.light header {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
+
+/* Futuristic Sci-Fi Animations & Performance Rules */
+@keyframes jarvis-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.jarvis-scanline {
+  position: relative;
+  overflow: hidden;
+}
+
+.jarvis-scanline::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.7), transparent);
+  animation: jarvis-scan 8s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

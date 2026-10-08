@@ -3753,6 +3753,58 @@ ${formatSpec.promptHeader}`;
     }
   });
 
+  // 8. FIX ALL VOICE-OVER TIMING (Auto-fit all scenes into 8s windows)
+  app.post("/api/short-engine/fix-all-timing", async (req, res) => {
+    try {
+      const { scenes = [] } = req.body;
+      const updatedScenes = scenes.map((sc: any, idx: number) => {
+        const words = (sc.voiceOver || "").trim().split(/\s+/).filter(Boolean);
+        let updatedVoice = sc.voiceOver || "";
+        if (words.length > 16) {
+          updatedVoice = words.slice(0, 16).join(" ") + "।";
+        } else if (words.length < 12 && words.length > 0) {
+          if (sc.role === "HOOK") {
+            updatedVoice = sc.voiceOver + " क्या आप जानते हैं?";
+          } else if (sc.role === "ENDING") {
+            updatedVoice = sc.voiceOver + " कमेंट में बताएं।";
+          } else {
+            updatedVoice = sc.voiceOver + " यह बिल्कुल सच है।";
+          }
+        }
+
+        // Hard cap at 16 words maximum
+        let finalTokens = updatedVoice.trim().split(/\s+/).filter(Boolean);
+        if (finalTokens.length > 16) {
+          finalTokens = finalTokens.slice(0, 16);
+          updatedVoice = finalTokens.join(" ") + "।";
+        }
+
+        const newWords = finalTokens.length;
+        const estSec = Number((newWords / 2.3).toFixed(1));
+        const valStatus = estSec <= 8.0 ? (estSec >= 5.0 ? "GREEN" : "YELLOW") : "RED";
+
+        return {
+          ...sc,
+          voiceOver: updatedVoice,
+          wordCount: newWords,
+          estimatedSpeakingTime: `${estSec}s`,
+          validationStatus: valStatus,
+          validationMessage: "Voice-over timing calibrated to fit 8s generation block."
+        };
+      });
+
+      return res.json({
+        success: true,
+        data: {
+          scenes: updatedScenes,
+          message: "All scene voice-overs calibrated to fit 8-second generation windows."
+        }
+      });
+    } catch (err: any) {
+      return res.status(500).json({ error: err?.message || "Failed to fix all timing" });
+    }
+  });
+
   // Helper to wrap raw 24kHz 16-bit Mono PCM in a standard WAV container
   function pcmToWav(pcmBuffer: Buffer, sampleRate = 24000, numChannels = 1, bitsPerSample = 16): Buffer {
     if (pcmBuffer.length > 4 && pcmBuffer.subarray(0, 4).toString("ascii") === "RIFF") {

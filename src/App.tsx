@@ -42,8 +42,6 @@ import {
   ThemeSettings,
   V2NavigationTab,
 } from './types';
-import { V2Navigation } from './components/V2Navigation';
-import { SidebarNavigation } from './components/SidebarNavigation';
 import { GodsEyeLoginScreen } from './components/GodsEyeLoginScreen';
 import {
   getCurrentUser,
@@ -76,6 +74,14 @@ import { AiSettingsView } from './components/views/AiSettingsView';
 import { ShortCreatorView } from './components/views/ShortCreatorView';
 import { ContextualRightPanel } from './components/ContextualRightPanel';
 import { Sparkles } from 'lucide-react';
+import { SystemBootSequence } from './components/supercomputer/SystemBootSequence';
+import { JarvisAiCore, CoreProcessingState } from './components/supercomputer/JarvisAiCore';
+import { SupercomputerTopBar } from './components/supercomputer/SupercomputerTopBar';
+import { SupercomputerNav } from './components/supercomputer/SupercomputerNav';
+import { CommandCoreDashboard } from './components/supercomputer/CommandCoreDashboard';
+import { NewContentModal } from './components/supercomputer/NewContentModal';
+import { JarvisCopilotLayer } from './components/supercomputer/JarvisCopilotLayer';
+import { CommandPaletteModal } from './components/CommandPaletteModal';
 
 const INITIAL_CONFIG: StudioConfig = {
   title: '',
@@ -107,6 +113,19 @@ export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+
+  // Futuristic Supercomputer OS States
+  const [hasBooted, setHasBooted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('godseye_booted_session') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isNewContentModalOpen, setIsNewContentModalOpen] = useState(false);
+  const [coreProcessingState, setCoreProcessingState] = useState<CoreProcessingState>('idle');
+  const [activeCreationStep, setActiveCreationStep] = useState<string>('');
 
   // Theme & Visual Customizer State (Parts A-C)
   const [themeSettings, setThemeSettings] = useState<ThemeSettings>(() =>
@@ -656,6 +675,128 @@ export default function App() {
     handleNewProject();
   };
 
+  // Futuristic Supercomputer Action: Initialize New Content Workflow (24s / 32s / 40s)
+  const handleInitializeNewContent = async (params: {
+    topic: string;
+    contentType: ContentType;
+    duration: Duration;
+  }) => {
+    try {
+      setCoreProcessingState('thinking');
+      setActiveCreationStep('ANALYZING TOPIC & QUANTUM STORY ANGLE...');
+
+      const starterProject = createNewProject({
+        title: params.topic,
+        sourceUrl: '',
+        storyContent: params.topic,
+        contentType: params.contentType,
+        duration: params.duration,
+        language: 'Hindi',
+      });
+      starterProject.name = params.topic.slice(0, 48);
+      saveProject(starterProject);
+      setProjects(getAllProjects());
+      setCurrentProject(starterProject);
+      setActiveProjectId(starterProject.id);
+
+      const updatedConfig: StudioConfig = {
+        ...config,
+        title: params.topic,
+        storyContent: params.topic,
+        contentType: params.contentType,
+        duration: params.duration,
+        language: 'Hindi',
+      };
+      setConfig(updatedConfig);
+
+      setActiveCreationStep('CONNECTING NEURAL ENGINE & SCRIPT TIMING...');
+      setCoreProcessingState('scripting');
+
+      // Call generate-content API
+      const response = await fetch('/api/generate-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            ...updatedConfig,
+            language: 'Hindi',
+            videoFormat: config.videoFormat || '9:16 Portrait',
+          },
+        }),
+      });
+
+      setActiveCreationStep('SYNTHESIZING 8-SECOND FLOW CLIPS...');
+      setCoreProcessingState('flow');
+
+      const resJson = await response.json();
+      if (resJson.success && resJson.data) {
+        setAiResult(resJson.data);
+        const finalProj: GodseyeProject = {
+          ...starterProject,
+          status: 'READY',
+          content: resJson.data,
+          result: resJson.data,
+        };
+        saveProject(finalProj);
+        setCurrentProject(finalProj);
+        setProjects(getAllProjects());
+
+        setCoreProcessingState('complete');
+        setTimeout(() => setCoreProcessingState('idle'), 2500);
+      } else {
+        setCoreProcessingState('error');
+        setTimeout(() => setCoreProcessingState('idle'), 3000);
+      }
+    } catch (err) {
+      console.error('Supercomputer creation failure:', err);
+      setCoreProcessingState('error');
+      setTimeout(() => setCoreProcessingState('idle'), 3000);
+    } finally {
+      setIsNewContentModalOpen(false);
+      setActiveTab('Create');
+      setCreatorMode('short');
+    }
+  };
+
+  // Handler for Quick Command Palette Triggers
+  const handleSupercomputerQuickAction = async (actionKey: string) => {
+    if (actionKey === 'new-content') {
+      setIsNewContentModalOpen(true);
+    } else if (actionKey === 'timing' || actionKey === 'fix-timing') {
+      setCoreProcessingState('thinking');
+      try {
+        const scenes = aiResult?.scenes || [];
+        const res = await fetch('/api/short-engine/fix-all-timing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenes }),
+        });
+        const json = await res.json();
+        if (json.success && json.data?.scenes) {
+          const updated = { ...aiResult!, scenes: json.data.scenes };
+          setAiResult(updated);
+          const updatedProject: GodseyeProject = {
+            ...currentProject,
+            content: updated,
+            result: updated,
+          };
+          saveProject(updatedProject);
+          setCurrentProject(updatedProject);
+          setProjects(getAllProjects());
+          setCoreProcessingState('complete');
+          setTimeout(() => setCoreProcessingState('idle'), 2000);
+        }
+      } catch (err) {
+        setCoreProcessingState('error');
+        setTimeout(() => setCoreProcessingState('idle'), 2000);
+      }
+    } else if (actionKey.startsWith('duration-')) {
+      const dur = actionKey.replace('duration-', '') + ' sec';
+      setConfig((prev) => ({ ...prev, duration: dur as Duration }));
+      setActiveTab('Create');
+    }
+  };
+
   // If operator is not authenticated, show full-screen God's Eye Login
   if (!currentUser) {
     return (
@@ -669,67 +810,63 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#090b10] text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Top Navigation / Brand Header with Projects Counter & New Project Button */}
-      <Header
-        onOpenGuide={() => setIsGuideOpen(true)}
-        onReset={handleReset}
-        projectsCount={projects.length}
-        onOpenProjects={() => setIsProjectsDrawerOpen(true)}
-        onNewProject={handleNewProject}
-        onOpenTheme={() => setIsThemeModalOpen(true)}
+    <div className="min-h-screen bg-[#02050c] text-slate-100 flex flex-col font-mono selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* 0. CINEMATIC BOOT EXPERIENCE */}
+      {!hasBooted && (
+        <SystemBootSequence
+          onComplete={() => {
+            setHasBooted(true);
+            try {
+              localStorage.setItem('godseye_booted_session', 'true');
+            } catch {}
+          }}
+        />
+      )}
+
+      {/* 1. FUTURISTIC SUPERCOMPUTER TOP BAR */}
+      <SupercomputerTopBar
         currentProjectName={currentProject.name}
-        currentProjectStatus={currentProject.status}
-        currentWorkflowStep={activeTab}
+        coreState={coreProcessingState}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenNewContentModal={() => setIsNewContentModalOpen(true)}
         currentUser={currentUser}
         onOpenLogin={() => setShowLoginModal(true)}
         onSignOut={() => {
           clearUserSession();
           setCurrentUser(null);
         }}
-        onNavigateTab={setActiveTab}
-        isRightPanelOpen={isRightPanelOpen}
-        onToggleRightPanel={() => setIsRightPanelOpen((prev) => !prev)}
+        onNavigateHome={() => setActiveTab('Dashboard')}
+        activeTabLabel={activeTab}
+        onOpenTheme={() => setIsThemeModalOpen(true)}
       />
 
-      {/* Main Studio Body: Sidebar + Stage */}
+      {/* Main Studio Body: Supercomputer Navigation + Stage */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Hierarchical Command Sidebar */}
-        <SidebarNavigation
+        {/* Left Futuristic Supercomputer Navigation (Unified 23 Subsystems & Categories) */}
+        <SupercomputerNav
           activeTab={activeTab}
           onSelectTab={setActiveTab}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           projectsCount={projects.length}
-          hasActiveProject={Boolean(currentProject)}
-          activeProjectName={currentProject?.name}
-          onNewProject={handleNewProject}
+          onOpenThemeModal={() => setIsThemeModalOpen(true)}
+          currentProjectName={currentProject?.name}
         />
 
-        {/* Center Content Workspace Stage */}
+        {/* Center Content Workspace Stage (Clean, spacious, professional workflow) */}
         <div id="godseye-hue-stage" className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-          {/* Horizontal Quick-Tab Strip */}
-          <V2Navigation
-            activeTab={activeTab}
-            onSelectTab={setActiveTab}
-            hasActiveProject={Boolean(currentProject)}
-            activeProjectName={currentProject?.name}
-          />
-
           <div className="flex-1 flex min-w-0">
             <main className="flex-1 min-w-0 w-full max-w-none 2xl:max-w-[1750px] mx-auto px-3 sm:px-6 lg:px-8 xl:pr-12 pt-4 pb-16 space-y-6 transition-all">
               {/* Active Tab View Routing */}
             {activeTab === 'Dashboard' && (
-              <DashboardView
+              <CommandCoreDashboard
+                currentProject={currentProject}
                 projects={projects}
-                activeProjectId={currentProject.id}
+                coreState={coreProcessingState}
                 onNavigate={setActiveTab}
+                onNewContent={() => setIsNewContentModalOpen(true)}
                 onOpenProject={(project) => {
                   handleOpenProject(project);
-                  setActiveTab('Create');
-                }}
-                onNewProject={() => {
-                  handleNewProject();
                   setActiveTab('Create');
                 }}
               />
@@ -1192,6 +1329,30 @@ export default function App() {
         onDuplicateProject={handleDuplicateProject}
         onDeleteProject={handleDeleteProject}
         onRenameProject={handleRenameProject}
+      />
+
+      {/* FUTURISTIC SUPERCOMPUTER MODALS & INTELLIGENCE COPILOT */}
+      <NewContentModal
+        isOpen={isNewContentModalOpen}
+        onClose={() => setIsNewContentModalOpen(false)}
+        onInitialize={handleInitializeNewContent}
+        isProcessing={coreProcessingState !== 'idle' && coreProcessingState !== 'complete'}
+        processingStep={activeCreationStep}
+      />
+
+      <CommandPaletteModal
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={setActiveTab}
+        projects={projects}
+        onOpenProject={handleOpenProject}
+        onTriggerQuickAction={handleSupercomputerQuickAction}
+      />
+
+      <JarvisCopilotLayer
+        aiResult={aiResult}
+        onNavigate={setActiveTab}
+        onQuickFix={handleSupercomputerQuickAction}
       />
     </div>
   );

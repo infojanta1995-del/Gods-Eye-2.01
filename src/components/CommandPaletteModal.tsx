@@ -3,16 +3,19 @@ import {
   Search,
   X,
   Sparkles,
-  LayoutDashboard,
-  FileText,
-  Clapperboard,
+  Zap,
+  Cpu,
+  FileCode,
+  Film,
   Image as ImageIcon,
   Tag,
-  Youtube,
   BarChart3,
-  FolderArchive,
+  HardDrive,
+  FolderKanban,
   ArrowRight,
-  Settings,
+  Clock,
+  ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
 import { V2NavigationTab, GodseyeProject } from '../types';
 
@@ -22,13 +25,14 @@ interface CommandPaletteModalProps {
   onNavigate: (tab: V2NavigationTab) => void;
   projects: GodseyeProject[];
   onOpenProject: (project: GodseyeProject) => void;
+  onTriggerQuickAction?: (actionName: string) => void;
 }
 
 interface CommandItem {
   id: string;
   title: string;
   subtitle: string;
-  category: 'NAVIGATION' | 'PROJECTS' | 'ACTIONS';
+  category: 'SUPERCOMPUTER ACTIONS' | 'SUBSYSTEMS' | 'PROJECTS';
   icon: React.ReactNode;
   action: () => void;
 }
@@ -39,6 +43,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onNavigate,
   projects,
   onOpenProject,
+  onTriggerQuickAction,
 }) => {
   const [query, setQuery] = useState('');
 
@@ -47,9 +52,6 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         if (isOpen) onClose();
-        else {
-          // Open handled by parent or state
-        }
       }
       if (e.key === 'Escape' && isOpen) {
         onClose();
@@ -62,23 +64,86 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   if (!isOpen) return null;
 
   const baseCommands: CommandItem[] = [
+    // Supercomputer System Actions
     {
-      id: 'cmd-dashboard',
-      title: 'Command Center Dashboard',
-      subtitle: 'View production metrics, publishing status, and recent activity',
-      category: 'NAVIGATION',
-      icon: <LayoutDashboard className="w-4 h-4 text-cyan-400" />,
+      id: 'cmd-new-content',
+      title: 'Initialize 8-Second Creation Matrix',
+      subtitle: 'Open high-precision creation console (24s / 32s / 40s)',
+      category: 'SUPERCOMPUTER ACTIONS',
+      icon: <Sparkles className="w-4 h-4 text-cyan-400" />,
+      action: () => {
+        onNavigate('Create');
+        if (onTriggerQuickAction) onTriggerQuickAction('new-content');
+        onClose();
+      },
+    },
+    {
+      id: 'cmd-auto-fit-voice',
+      title: 'Auto Fit All Voice Timings (15-17 W / Clip)',
+      subtitle: 'Strictly calibrate all Hindi voiceovers to 8.0s audio limits',
+      category: 'SUPERCOMPUTER ACTIONS',
+      icon: <Zap className="w-4 h-4 text-amber-400" />,
+      action: () => {
+        onNavigate('Create');
+        if (onTriggerQuickAction) onTriggerQuickAction('fix-timing');
+        onClose();
+      },
+    },
+    {
+      id: 'cmd-convert-24',
+      title: 'Convert Workflow to 24 Seconds (3 × 8s)',
+      subtitle: 'Recalibrate timeline into 3 clips: Hook -> Main -> End',
+      category: 'SUPERCOMPUTER ACTIONS',
+      icon: <Clock className="w-4 h-4 text-sky-400" />,
+      action: () => {
+        onNavigate('Create');
+        if (onTriggerQuickAction) onTriggerQuickAction('duration-24');
+        onClose();
+      },
+    },
+    {
+      id: 'cmd-convert-32',
+      title: 'Convert Workflow to 32 Seconds (4 × 8s)',
+      subtitle: 'Recalibrate timeline into 4 clips: Hook -> Main A -> Reveal -> End',
+      category: 'SUPERCOMPUTER ACTIONS',
+      icon: <Clock className="w-4 h-4 text-purple-400" />,
+      action: () => {
+        onNavigate('Create');
+        if (onTriggerQuickAction) onTriggerQuickAction('duration-32');
+        onClose();
+      },
+    },
+    {
+      id: 'cmd-convert-40',
+      title: 'Convert Workflow to 40 Seconds (5 × 8s)',
+      subtitle: 'Recalibrate timeline into 5 clips: Hook -> Main A -> Main B -> Reveal -> End',
+      category: 'SUPERCOMPUTER ACTIONS',
+      icon: <Clock className="w-4 h-4 text-pink-400" />,
+      action: () => {
+        onNavigate('Create');
+        if (onTriggerQuickAction) onTriggerQuickAction('duration-40');
+        onClose();
+      },
+    },
+
+    // Subsystems
+    {
+      id: 'cmd-core',
+      title: 'Command Core Matrix (JARVIS Kernel)',
+      subtitle: 'Central AI Processing Core & Subsystem Radar',
+      category: 'SUBSYSTEMS',
+      icon: <Cpu className="w-4 h-4 text-cyan-400" />,
       action: () => {
         onNavigate('Dashboard');
         onClose();
       },
     },
     {
-      id: 'cmd-create',
-      title: 'Create Studio (New Content)',
-      subtitle: 'Source article input, studio controls, and video synthesis',
-      category: 'NAVIGATION',
-      icon: <Sparkles className="w-4 h-4 text-cyan-400" />,
+      id: 'cmd-flow',
+      title: 'Google Flow Studio',
+      subtitle: 'Visual 8-second timeline, camera angles & Hindi narration prompts',
+      category: 'SUBSYSTEMS',
+      icon: <Zap className="w-4 h-4 text-amber-400" />,
       action: () => {
         onNavigate('Create');
         onClose();
@@ -86,10 +151,10 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     },
     {
       id: 'cmd-research',
-      title: 'Deep Topic Research',
-      subtitle: 'Analyze breaking news, narrative angles, and trending entities',
-      category: 'NAVIGATION',
-      icon: <Search className="w-4 h-4 text-teal-400" />,
+      title: 'Deep Research Subsystem',
+      subtitle: 'Fact-checking, intelligence harvesting & entity verification',
+      category: 'SUBSYSTEMS',
+      icon: <Search className="w-4 h-4 text-emerald-400" />,
       action: () => {
         onNavigate('Research');
         onClose();
@@ -97,78 +162,45 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     },
     {
       id: 'cmd-script',
-      title: 'Script Studio & Teleprompter',
-      subtitle: 'Review narrative pacing, word counts, and voiceover timing',
-      category: 'NAVIGATION',
-      icon: <FileText className="w-4 h-4 text-blue-400" />,
+      title: 'Script Studio (Hindi Acoustic Engine)',
+      subtitle: 'Phonetic speaking speeds, word counters and Hook engineering',
+      category: 'SUBSYSTEMS',
+      icon: <FileCode className="w-4 h-4 text-sky-400" />,
       action: () => {
         onNavigate('Script');
         onClose();
       },
     },
     {
-      id: 'cmd-scene',
-      title: 'Scene Studio & Visual Directing',
-      subtitle: 'Google Veo 2, Runway Gen-3, and Midjourney camera prompts',
-      category: 'NAVIGATION',
-      icon: <Clapperboard className="w-4 h-4 text-purple-400" />,
+      id: 'cmd-scenes',
+      title: 'Scene Studio (Cinematic Timeline)',
+      subtitle: 'Veo 2, Runway Gen-3 & Google Flow multi-scene directorship',
+      category: 'SUBSYSTEMS',
+      icon: <Film className="w-4 h-4 text-purple-400" />,
       action: () => {
         onNavigate('Scene Studio');
         onClose();
       },
     },
     {
-      id: 'cmd-thumbnail',
-      title: 'Thumbnail Studio & Psychology',
-      subtitle: 'Click-magnet visual blueprints and 3-word title overlay safe zones',
-      category: 'NAVIGATION',
-      icon: <ImageIcon className="w-4 h-4 text-amber-400" />,
-      action: () => {
-        onNavigate('Thumbnail Studio');
-        onClose();
-      },
-    },
-    {
-      id: 'cmd-seo',
-      title: 'Multi-Platform SEO Engine',
-      subtitle: 'High-CTR titles, hashtags, and description tags',
-      category: 'NAVIGATION',
-      icon: <Tag className="w-4 h-4 text-emerald-400" />,
-      action: () => {
-        onNavigate('SEO Studio');
-        onClose();
-      },
-    },
-    {
       id: 'cmd-analytics',
-      title: 'Retention & Drop-off Analytics',
-      subtitle: 'Simulate 60s viewer attention curves and hook velocity',
-      category: 'NAVIGATION',
-      icon: <BarChart3 className="w-4 h-4 text-teal-400" />,
+      title: 'Retention Radar & Audience Modeling',
+      subtitle: 'Drop-off prevention and attention trajectory curves',
+      category: 'SUBSYSTEMS',
+      icon: <BarChart3 className="w-4 h-4 text-indigo-400" />,
       action: () => {
         onNavigate('Analytics');
         onClose();
       },
     },
     {
-      id: 'cmd-projects',
-      title: 'Saved Projects Library',
-      subtitle: 'Manage local project vault, search, and duplicate workflows',
-      category: 'NAVIGATION',
-      icon: <FolderArchive className="w-4 h-4 text-cyan-400" />,
+      id: 'cmd-memory',
+      title: 'Persistent Project Memory Vault',
+      subtitle: 'Historical creator preferences and successful story patterns',
+      category: 'SUBSYSTEMS',
+      icon: <HardDrive className="w-4 h-4 text-pink-400" />,
       action: () => {
-        onNavigate('Projects');
-        onClose();
-      },
-    },
-    {
-      id: 'cmd-settings',
-      title: 'Studio Settings & Voice Configuration',
-      subtitle: 'Manage theme aesthetics, AI model telemetry, and TTS voices',
-      category: 'NAVIGATION',
-      icon: <Settings className="w-4 h-4 text-slate-400" />,
-      action: () => {
-        onNavigate('Settings');
+        onNavigate('Content Library');
         onClose();
       },
     },
@@ -176,10 +208,10 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
 
   const projectCommands: CommandItem[] = projects.map((p) => ({
     id: `project-${p.id}`,
-    title: p.name,
-    subtitle: `${p.settings.contentType} • ${p.settings.videoFormat} • ${p.settings.duration}`,
+    title: p.name || 'Untitled Quantum Archive',
+    subtitle: `${p.settings?.contentType || 'Short'} • ${p.settings?.duration || '24 sec'}`,
     category: 'PROJECTS',
-    icon: <FolderArchive className="w-4 h-4 text-cyan-400" />,
+    icon: <FolderKanban className="w-4 h-4 text-cyan-400" />,
     action: () => {
       onOpenProject(p);
       onClose();
@@ -194,13 +226,13 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/85 backdrop-blur-xl font-mono select-none">
       <div
-        className="w-full max-w-xl rounded-2xl bg-[#0b101c] border border-slate-700/80 shadow-2xl shadow-cyan-950/40 overflow-hidden flex flex-col"
+        className="w-full max-w-2xl rounded-2xl bg-[#060b14] border border-cyan-500/50 shadow-[0_0_60px_rgba(6,182,212,0.3)] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Search input header */}
-        <div className="p-4 border-b border-slate-800 flex items-center gap-3">
+        {/* Search Input Header */}
+        <div className="p-4 border-b border-cyan-950/80 bg-[#040810] flex items-center gap-3">
           <Search className="w-5 h-5 text-cyan-400 flex-shrink-0" />
           <input
             type="text"
@@ -208,8 +240,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search studio tools, workspaces, or saved projects..."
-            className="flex-1 bg-transparent border-none outline-none text-sm text-white placeholder-slate-500 font-sans"
+            placeholder="EXECUTE COMMAND: Type an action, subsystem, or project archive..."
+            className="flex-1 bg-transparent border-none outline-none text-xs text-white placeholder-slate-500 font-mono tracking-wider"
           />
           <button
             type="button"
@@ -220,11 +252,11 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           </button>
         </div>
 
-        {/* Results list */}
-        <div className="max-h-96 overflow-y-auto p-2 space-y-1 text-xs scrollbar-thin scrollbar-thumb-slate-800">
+        {/* Results List */}
+        <div className="max-h-96 overflow-y-auto p-2 space-y-1 text-xs">
           {filtered.length === 0 ? (
             <div className="p-8 text-center text-slate-500">
-              No matching tools or projects found.
+              NO MATCHING COMMANDS FOUND IN QUANTUM KERNEL.
             </div>
           ) : (
             filtered.map((item) => (
@@ -232,34 +264,34 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                 key={item.id}
                 type="button"
                 onClick={item.action}
-                className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-900/90 border border-transparent hover:border-slate-800 text-left transition-colors cursor-pointer group"
+                className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-cyan-950/40 border border-transparent hover:border-cyan-500/40 text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex-shrink-0">
+                  <div className="p-2 rounded-lg bg-slate-950 border border-cyan-950/80 flex-shrink-0">
                     {item.icon}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-200 group-hover:text-cyan-300 truncate">
+                    <p className="text-xs font-bold text-white group-hover:text-cyan-300 truncate uppercase">
                       {item.title}
                     </p>
-                    <p className="text-[11px] text-slate-400 truncate">{item.subtitle}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{item.subtitle}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800 uppercase">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#03060d] text-cyan-400 border border-cyan-900/60 uppercase">
                     {item.category}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
                 </div>
               </button>
             ))
           )}
         </div>
 
-        {/* Footer shortcuts */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-          <span>Navigate with mouse or Tab</span>
-          <span>ESC to dismiss</span>
+        {/* Footer */}
+        <div className="p-3 border-t border-cyan-950/80 bg-[#03060c] flex items-center justify-between text-[10px] text-cyan-500/70">
+          <span>JARVIS COMMAND INTERFACE READY</span>
+          <span>PRESS [ESC] TO DISMISS</span>
         </div>
       </div>
     </div>
