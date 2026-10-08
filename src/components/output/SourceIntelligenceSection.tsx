@@ -46,7 +46,7 @@ export const SourceIntelligenceSection: React.FC<SourceIntelligenceSectionProps>
 
   const handleCopyAll = () => {
     const fullIntel = `==================================================
-GOD'S EYE V2.0 — SOURCE INTELLIGENCE DOSSIER
+GOD'S EYE V3.0 — SOURCE INTELLIGENCE DOSSIER
 ==================================================
 TOPIC: ${analysis.mainTopic || config.title}
 SOURCE SUMMARY:
@@ -359,7 +359,7 @@ ${analysis.whyItMatters}
           </h4>
         </div>
         <p className="text-xs text-amber-200/80">
-          GOD'S EYE V2.0 cross-checks unconfirmed claims to prevent publishing ungrounded speculation:
+          GOD'S EYE V3.0 cross-checks unconfirmed claims to prevent publishing ungrounded speculation:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
           {uncertaintyList.map((note, idx) => (

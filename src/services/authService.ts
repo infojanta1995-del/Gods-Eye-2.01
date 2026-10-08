@@ -1,5 +1,5 @@
 /**
- * GOD'S EYE V2.0 — AUTHENTICATION & MULTI-USER ARCHITECTURE
+ * GOD'S EYE V3.0 — AUTHENTICATION & MULTI-USER ARCHITECTURE
  * Provides secure session management, server-side OAuth status checks,
  * and user profile persistence without exposing developer secrets.
  */

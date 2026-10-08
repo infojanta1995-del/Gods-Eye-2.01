@@ -109,8 +109,8 @@ export const WORKFLOW_STAGES: StageDefinition[] = [
   },
   {
     id: 'publishReady',
-    label: 'Ready To Publish',
-    shortLabel: 'Publish',
+    label: 'Final Production Package',
+    shortLabel: 'Production',
     stepNumber: 10,
     icon: <Send className="w-3.5 h-3.5" />,
     isComplete: (res) => Boolean(res && res.script && res.scenes?.length && res.seo),

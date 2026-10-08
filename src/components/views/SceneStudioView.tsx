@@ -221,11 +221,16 @@ export const SceneStudioView: React.FC<SceneStudioViewProps> = ({
                             Scene {scene.sceneNumber}
                             {scene.title ? ` — ${scene.title}` : ''}
                           </h3>
+                          {scene.role && (
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/60 uppercase">
+                              ROLE: {scene.role}
+                            </span>
+                          )}
                           <span className="text-xs font-mono text-slate-300 bg-slate-900 px-2.5 py-0.5 rounded border border-slate-800">
-                            {scene.startTime || '00:00'} - {scene.endTime || '00:05'}
+                            {scene.startTime || '00:00'} - {scene.endTime || '00:08'}
                           </span>
                           <span className="text-[11px] font-mono text-cyan-300 bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-cyan-800/40">
-                            {scene.duration || '5s'}
+                            {scene.duration || '8s'}
                           </span>
                         </div>
                       </div>
@@ -293,6 +298,37 @@ export const SceneStudioView: React.FC<SceneStudioViewProps> = ({
                     <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
                       {scene.visualObjective || scene.visual || 'Visual composition and narrative focus.'}
                     </p>
+                  </div>
+
+                  {/* 2b. AUDIO-VISUAL SYNCHRONIZATION (GOD'S EYE V3.0 MANDATE) */}
+                  <div className="p-4 rounded-xl bg-[#08121f] border border-cyan-500/30 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-cyan-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                        AUDIO-VISUAL SYNC (8-SECOND FLOW ALIGNMENT):
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/50">
+                        1:1 TIMED
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800/80 space-y-1">
+                        <span className="text-[10px] font-mono uppercase text-slate-400 font-bold block">
+                          VISUAL ACTION IN 8s WINDOW:
+                        </span>
+                        <p className="text-xs text-slate-200 leading-relaxed">
+                          {scene.visualAction || scene.action || scene.visual}
+                        </p>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-purple-900/40 space-y-1">
+                        <span className="text-[10px] font-mono uppercase text-purple-400 font-bold block">
+                          AUDIO-VISUAL EVENT MATCH:
+                        </span>
+                        <p className="text-xs text-purple-200/90 leading-relaxed">
+                          {scene.audioVisualSync || `Visual motion strictly illustrates and reinforces the Hindi narration line: "${(scene.voiceOver || '').slice(0, 50)}..."`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* 3. GOOGLE FLOW / VEO VIDEO PROMPT (With its own dedicated scrollable content area) */}

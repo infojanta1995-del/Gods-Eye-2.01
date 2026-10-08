@@ -10,6 +10,9 @@ export type ContentType =
   | 'Documentary';
 
 export type Duration =
+  | '24 sec'
+  | '32 sec'
+  | '40 sec'
   | '15 sec'
   | '30 sec'
   | '45 sec'
@@ -39,31 +42,41 @@ export type ContentStyle =
   | 'Explainer';
 
 export type V2NavigationTab =
+  // COMMAND CENTER
   | 'Dashboard'
   | 'Create'
+  | 'Projects'
+  | 'Content Library'
+  // INTELLIGENCE
   | 'Research'
+  | 'Trend Intelligence'
+  | 'Story Intelligence'
+  | 'AI Recommendations'
+  | 'Analytics'
+  | 'Channel Analytics'
+  | 'Content Analytics'
+  // PRODUCTION
+  | 'Script Studio'
   | 'Script'
   | 'Scene Studio'
+  | 'Voice Studio'
   | 'Thumbnail Studio'
   | 'SEO Studio'
+  | 'Short Production'
+  // SYSTEM
+  | 'AI Models'
+  | 'AI Settings'
+  | 'Connected Accounts'
+  | 'Settings'
+  | 'Account'
+  | 'History'
+  | 'Theme'
+  // Legacy compatibility
   | 'YouTube'
   | 'Facebook'
   | 'Instagram'
   | 'Publishing Queue'
-  | 'Scheduler'
-  | 'Analytics'
-  | 'Channel Analytics'
-  | 'Content Analytics'
-  | 'AI Recommendations'
-  | 'Trend Intelligence'
-  | 'Projects'
-  | 'Content Library'
-  | 'History'
-  | 'Settings'
-  | 'Account'
-  | 'Connected Accounts'
-  | 'AI Settings'
-  | 'Theme';
+  | 'Scheduler';
 
 export interface PublishingQueueItem {
   id: string;
@@ -403,6 +416,7 @@ export interface SceneItem {
   endTime: string;
   duration: string;
   time?: string;
+  role?: 'HOOK' | 'MAIN' | 'MAIN DETAIL' | 'REVEAL / IMPORTANT DETAIL' | 'ENDING' | string;
   voiceOver: string;
   narration?: string;
   visual: string;
@@ -434,6 +448,96 @@ export interface SceneItem {
   finalVideoPrompt?: string;
   editorialSafetyNote?: string;
   formatTag?: string;
+  // GOD'S EYE V3.0 Flow & Sync additions:
+  googleFlowPrompt?: string;
+  visualAction?: string;
+  audioVisualSync?: string;
+  speakingPace?: string;
+  wordCount?: number;
+  estimatedSpeakingTime?: string;
+  syncNotes?: string;
+  validationStatus?: 'GREEN' | 'RED' | 'YELLOW';
+  validationMessage?: string;
+}
+
+export interface ScriptVersion {
+  id: string;
+  versionNumber: number;
+  createdAt: string;
+  duration: Duration;
+  title: string;
+  fullHindiScript: string;
+  scenes: SceneItem[];
+  retentionScore: number;
+  hookScore: number;
+  storyScore?: number;
+  pacingScore?: number;
+  visualSyncScore?: number;
+  continuityScore?: number;
+  notes?: string;
+  shortProductionPackage?: ShortProductionPackage;
+}
+
+// GOD'S EYE V3.0: Script Quality Engine Evaluation (0-100 scores)
+export interface ScriptQualityEvaluation {
+  hookScore: number;         // 0–100
+  storyScore: number;        // 0–100
+  retentionScore: number;    // 0–100
+  voiceoverScore: number;    // 0–100
+  visualSyncScore: number;   // 0–100
+  endingScore: number;       // 0–100
+  overallScore: number;      // 0–100
+  aiRecommendations: string[];
+  durationAccuracyCheck: boolean;
+  hindiVoiceOverCheck: boolean;
+  syncIntegrityCheck: boolean;
+  hookCheck: boolean;
+  mainStoryCheck: boolean;
+  endingCheck: boolean;
+  flowPromptsCheck: boolean;
+  continuityCheck: boolean;
+}
+
+// GOD'S EYE V3.0: Complete Short Video Production Package
+export interface ShortProductionPackage {
+  title: string;
+  targetDuration: string; // "24 SEC" | "32 SEC" | "40 SEC"
+  clipCount: number;      // 3 | 4 | 5
+  voiceLanguage: string;  // "Hindi"
+  fullHindiScript: string;
+  estimatedWpm: number;
+  totalWords: number;
+  scenes: Array<{
+    sceneNumber: number;
+    timecode: string;       // "00:00 — 00:08"
+    durationSec: number;    // 8
+    role: string;           // "HOOK" | "MAIN" | "MAIN DETAIL" | "REVEAL" | "ENDING"
+    voiceOver: string;      // Natural spoken Hindi
+    googleFlowPrompt: string; // 8-sec optimized Google Flow prompt
+    visualAction: string;
+    syncExplanation: string;
+  }>;
+  continuityInstructions: string;
+  audioVoiceDirection: string;
+  finalTitle: string;
+  shortDescription: string;
+  suggestedHashtags: string[];
+  thumbnailConcept: {
+    headline: string;
+    visualDescription: string;
+    imagePrompt: string;
+  };
+  qualityAudit: ScriptQualityEvaluation;
+  finalChecks: {
+    duration: boolean;
+    hindiVoiceOver: boolean;
+    audioVisualSync: boolean;
+    hook: boolean;
+    mainStory: boolean;
+    ending: boolean;
+    flowPrompts: boolean;
+    continuity: boolean;
+  };
 }
 
 export interface MasterVideoStyle {
@@ -819,6 +923,10 @@ export interface GodseyeAiResult {
   keywords: KeywordsPackage;
   disclaimer: string;
   thumbnailStudioRecord?: ThumbnailStudioRecord;
+  // GOD'S EYE V3.0 additions:
+  shortProductionPackage?: ShortProductionPackage;
+  scriptQualityAudit?: ScriptQualityEvaluation;
+  scriptVersions?: ScriptVersion[];
   // Step 7 extensions:
   ttsAudio?: TTSAudioData;
   videoSettings?: VideoSettingsConfig;
@@ -949,6 +1057,7 @@ export interface GodseyeProject {
   };
   content: GodseyeAiResult | null;
   result?: any;
+  scriptVersions?: ScriptVersion[];
 }
 
 export interface ProjectFilterOptions {

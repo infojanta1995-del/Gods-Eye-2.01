@@ -10,24 +10,21 @@ import {
   CheckCircle2,
   AlertCircle,
   BarChart3,
-  Flame,
   Layers,
-  Youtube,
-  Facebook,
-  Instagram,
   Compass,
   FileText,
   Image as ImageIcon,
   Tag,
-  Mic,
-  Send,
+  Volume2,
   Cpu,
   Zap,
   Activity,
-  Calendar,
   Radio,
   Check,
   Folder,
+  ShieldCheck,
+  Film,
+  Terminal,
 } from 'lucide-react';
 import { GodseyeProject, V2NavigationTab } from '../../types';
 import { GodsEyeLogo } from '../GodsEyeLogo';
@@ -48,48 +45,99 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNewProject,
 }) => {
   const activeProject = projects.find((p) => p.id === activeProjectId) || projects[0];
-  const totalProjects = Math.max(projects.length, 3);
 
-  // Workflow steps matching Reference Image 2
-  const workflowSteps = [
-    { num: 1, label: 'Research', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' },
-    { num: 2, label: 'Angle', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
-    { num: 3, label: 'Hooks', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' },
-    { num: 4, label: 'Script', color: 'text-blue-400 bg-blue-500/10 border-blue-500/30' },
-    { num: 5, label: 'Scenes', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' },
-    { num: 6, label: 'Thumbnail', color: 'text-purple-400 bg-purple-500/10 border-purple-500/30' },
-    { num: 7, label: 'SEO', color: 'text-pink-400 bg-pink-500/10 border-pink-500/30' },
-    { num: 8, label: 'Final', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' },
+  // GOD'S EYE V3.0 Content Pipeline:
+  // RESEARCH -> STORY -> SCRIPT -> SCENES -> VOICE -> THUMBNAIL -> SEO -> READY
+  const pipelineStages = [
+    {
+      id: 'RESEARCH',
+      label: 'RESEARCH',
+      status: activeProject?.article?.content ? 'completed' : 'not started',
+      color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+      tab: 'Research' as V2NavigationTab,
+    },
+    {
+      id: 'STORY',
+      label: 'STORY',
+      status: activeProject?.content?.storyAngle ? 'completed' : 'not started',
+      color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+      tab: 'Create' as V2NavigationTab,
+    },
+    {
+      id: 'SCRIPT',
+      label: 'SCRIPT',
+      status: activeProject?.content?.script?.text ? 'completed' : 'not started',
+      color: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+      tab: 'Script Studio' as V2NavigationTab,
+    },
+    {
+      id: 'SCENES',
+      label: 'SCENES (8s)',
+      status: activeProject?.content?.scenes?.length ? 'completed' : 'not started',
+      color: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
+      tab: 'Scene Studio' as V2NavigationTab,
+    },
+    {
+      id: 'VOICE',
+      label: 'VOICE (TTS)',
+      status: activeProject?.content?.ttsAudio?.status === 'READY' ? 'completed' : 'needs attention',
+      color: 'text-pink-400 bg-pink-500/10 border-pink-500/30',
+      tab: 'Voice Studio' as V2NavigationTab,
+    },
+    {
+      id: 'THUMBNAIL',
+      label: 'THUMBNAIL',
+      status: activeProject?.content?.thumbnails?.bestThumbnail ? 'completed' : 'not started',
+      color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+      tab: 'Thumbnail Studio' as V2NavigationTab,
+    },
+    {
+      id: 'SEO',
+      label: 'SEO',
+      status: activeProject?.content?.seo ? 'completed' : 'not started',
+      color: 'text-teal-400 bg-teal-500/10 border-teal-500/30',
+      tab: 'SEO Studio' as V2NavigationTab,
+    },
+    {
+      id: 'READY',
+      label: 'READY (EXPORT)',
+      status: activeProject?.status === 'READY' || (activeProject?.content?.script && activeProject?.content?.scenes?.length) ? 'completed' : 'not started',
+      color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
+      tab: 'Create' as V2NavigationTab,
+    },
   ];
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
-      {/* 1. WELCOME HERO BANNER (Matching Reference Image 2) */}
-      <div className="rounded-3xl border border-slate-800/90 bg-gradient-to-r from-[#090e1a] via-[#0b1220] to-[#080d18] p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden">
-        {/* Golden & Cyan Ambient Backdrops */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 blur-[130px] pointer-events-none rounded-full" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-500/10 blur-[120px] pointer-events-none rounded-full" />
+      {/* 1. DIGITAL SUPERCOMPUTER COMMAND CENTER HERO BANNER */}
+      <div className="rounded-3xl border border-cyan-500/30 bg-gradient-to-r from-[#060912] via-[#091122] to-[#050811] p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden backdrop-blur-2xl">
+        {/* Ambient Hologram Glows */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 blur-[130px] pointer-events-none rounded-full" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-amber-500/10 blur-[120px] pointer-events-none rounded-full" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          {/* Left Text & CTA */}
-          <div className="space-y-4 max-w-xl">
+          {/* Left Supercomputer Mission Control Text */}
+          <div className="space-y-4 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-700/50 text-[11px] font-mono font-bold text-cyan-300">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span>AI CONTENT SUPERCOMPUTER • MISSION CONTROL</span>
+            </div>
+
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight font-heading">
-              Welcome Back,{' '}
+              GOD’S EYE{' '}
               <span
                 className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500"
                 style={{ textShadow: '0 0 25px rgba(245, 158, 11, 0.4)' }}
               >
-                Creator
+                V3.0
               </span>
             </h1>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Turn ideas into viral content with the power of AI. GOD'S EYE AI Studio is your
-              all-in-one creator command center.
+              Advanced Content Command Center for precision 8-second video workflows, synchronized Hindi voice-over narration, and high-retention cinematic short packages.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              {/* Primary Gold CTA */}
               <button
                 type="button"
                 id="btn-hero-create-new"
@@ -97,289 +145,347 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onNewProject();
                   onNavigate('Create');
                 }}
-                className="px-6 py-3 rounded-xl font-bold text-sm text-slate-950 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 transition-all transform active:scale-98 shadow-lg shadow-amber-500/25 flex items-center gap-2 cursor-pointer group"
+                className="px-6 py-3 rounded-xl font-bold text-sm text-slate-950 bg-gradient-to-r from-cyan-400 via-cyan-300 to-amber-300 hover:from-cyan-300 hover:to-amber-200 transition-all transform active:scale-98 shadow-lg shadow-cyan-500/25 flex items-center gap-2 cursor-pointer group"
               >
                 <Plus className="w-4 h-4 text-slate-950 stroke-[3]" />
-                <span>Create New Content</span>
+                <span>Launch 8s Creation Workflow</span>
               </button>
 
-              {/* Secondary Explore Templates */}
               <button
                 type="button"
-                id="btn-hero-explore-templates"
-                onClick={() => onNavigate('Create')}
-                className="px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 transition-all cursor-pointer flex items-center gap-2"
+                onClick={() => onNavigate('Research')}
+                className="px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/40 transition-all cursor-pointer flex items-center gap-2 font-mono"
               >
-                <Layers className="w-4 h-4 text-cyan-400" />
-                <span>Explore Templates</span>
+                <Search className="w-4 h-4 text-emerald-400" />
+                <span>Deep Research</span>
               </button>
             </div>
           </div>
 
-          {/* Right Floating 3D Golden God's Eye Graphic (Matching Reference Image 2) */}
+          {/* Right Holographic Supercomputer Status HUD */}
           <div className="flex-shrink-0 flex items-center justify-center lg:justify-end">
-            <div className="relative p-6 rounded-3xl bg-slate-950/60 border border-amber-500/30 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-500/20 via-cyan-500/10 to-amber-500/20 blur-lg pointer-events-none" />
+            <div className="relative p-6 rounded-3xl bg-slate-950/80 border border-cyan-500/40 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center w-72">
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500/20 via-amber-500/10 to-cyan-500/20 blur-lg pointer-events-none" />
               <GodsEyeLogo size="lg" mode="generating" showText={false} />
-              <div className="mt-3">
-                <span className="font-black text-sm tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400 block font-heading">
-                  GOD'S EYE
-                </span>
-                <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase block">
-                  AI STUDIO
-                </span>
-                <span className="text-[9px] font-mono tracking-widest text-amber-400/80 mt-1 block">
-                  SEE • ANALYZE • CREATE • GROW
-                </span>
+              
+              <div className="mt-3 w-full space-y-1.5 pt-2 border-t border-slate-800 text-[11px] font-mono">
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>SYSTEM STATUS:</span>
+                  <span className="text-emerald-400 font-bold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> OPERATIONAL
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>NEURAL CORE:</span>
+                  <span className="text-cyan-300 font-bold">Gemini 3.8 Flash</span>
+                </div>
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>FLOW ARCHITECTURE:</span>
+                  <span className="text-amber-400 font-bold">8s Blocks (24/32/40)</span>
+                </div>
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>VOICE PIPELINE:</span>
+                  <span className="text-pink-400 font-bold">Hindi Spoken Sync</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. 5 ACTION HUB CARDS (Row of 5 glassy cards matching Reference Image 2) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-        {/* Card 1: New Content */}
-        <div
-          onClick={() => onNavigate('Create')}
-          className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900/80 border border-slate-800/80 hover:border-blue-500/50 transition-all cursor-pointer group flex flex-col justify-between shadow-lg relative overflow-hidden"
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">
-              New Content
-            </h3>
-            <p className="text-xs text-slate-400 leading-snug">
-              Create viral content from any topic
-            </p>
+      {/* 2. SYSTEM STATUS CARDS (Row of Command Center Widgets) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 shadow-lg space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase text-slate-400">AI SYSTEM STATUS</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           </div>
-          <div className="pt-4 flex justify-end">
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
-          </div>
+          <span className="text-base font-black text-emerald-400 font-mono block">100% ONLINE</span>
+          <p className="text-[11px] text-slate-500">Latency: ~340ms</p>
         </div>
 
-        {/* Card 2: Research */}
-        <div
-          onClick={() => onNavigate('Research')}
-          className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900/80 border border-slate-800/80 hover:border-emerald-500/50 transition-all cursor-pointer group flex flex-col justify-between shadow-lg relative overflow-hidden"
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-              <Search className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
-              Research
-            </h3>
-            <p className="text-xs text-slate-400 leading-snug">
-              Discover trending topics & deep insights
-            </p>
+        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 shadow-lg space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase text-slate-400">ACTIVE MODEL</span>
+            <Cpu className="w-3.5 h-3.5 text-cyan-400" />
           </div>
-          <div className="pt-4 flex justify-end">
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
-          </div>
+          <span className="text-base font-black text-cyan-300 font-mono block">Gemini 3.8</span>
+          <p className="text-[11px] text-slate-500">Multimodal Neural</p>
         </div>
 
-        {/* Card 3: Scene Studio */}
-        <div
-          onClick={() => onNavigate('Scene Studio')}
-          className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/50 transition-all cursor-pointer group flex flex-col justify-between shadow-lg relative overflow-hidden"
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-              <Clapperboard className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">
-              Scene Studio
-            </h3>
-            <p className="text-xs text-slate-400 leading-snug">
-              Generate scene packages & video prompts
-            </p>
+        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 shadow-lg space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase text-slate-400">API STATUS</span>
+            <Radio className="w-3.5 h-3.5 text-amber-400" />
           </div>
-          <div className="pt-4 flex justify-end">
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
-          </div>
+          <span className="text-base font-black text-amber-300 font-mono block">AUTHENTICATED</span>
+          <p className="text-[11px] text-slate-500">Proxy Engine Secure</p>
         </div>
 
-        {/* Card 4: Thumbnail Studio */}
-        <div
-          onClick={() => onNavigate('Thumbnail Studio')}
-          className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900/80 border border-slate-800/80 hover:border-amber-500/50 transition-all cursor-pointer group flex flex-col justify-between shadow-lg relative overflow-hidden"
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-              <ImageIcon className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">
-              Thumbnail Studio
-            </h3>
-            <p className="text-xs text-slate-400 leading-snug">
-              Create high CTR thumbnails
-            </p>
+        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 shadow-lg space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase text-slate-400">GENERATION PIPELINE</span>
+            <Film className="w-3.5 h-3.5 text-purple-400" />
           </div>
-          <div className="pt-4 flex justify-end">
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
-          </div>
+          <span className="text-base font-black text-purple-300 font-mono block">8s FLOW READY</span>
+          <p className="text-[11px] text-slate-500">Veo / Flow Compatible</p>
         </div>
 
-        {/* Card 5: SEO Studio */}
-        <div
-          onClick={() => onNavigate('SEO Studio')}
-          className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900/80 border border-slate-800/80 hover:border-pink-500/50 transition-all cursor-pointer group flex flex-col justify-between shadow-lg relative overflow-hidden"
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-pink-300 transition-colors">
-              SEO Studio
-            </h3>
-            <p className="text-xs text-slate-400 leading-snug">
-              Optimize for 10+ platforms & rank higher
-            </p>
+        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 shadow-lg space-y-1.5 col-span-2 sm:col-span-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase text-slate-400">CURRENT PROJECT</span>
+            <Folder className="w-3.5 h-3.5 text-sky-400" />
           </div>
-          <div className="pt-4 flex justify-end">
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-pink-400 group-hover:translate-x-1 transition-all" />
-          </div>
+          <span className="text-xs font-bold text-white truncate block">
+            {activeProject ? activeProject.name : 'Untitled Project'}
+          </span>
+          <p className="text-[11px] text-emerald-400 font-mono">
+            {activeProject?.status || 'DRAFT'}
+          </p>
         </div>
       </div>
 
-      {/* 3. MIDDLE ROW: GENERATION WORKFLOW & STATUS (Matching Reference Image 2) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Generation Workflow Card (2 cols) */}
-        <div className="lg:col-span-2 rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                <Activity className="w-4 h-4 text-cyan-400" />
-                <span>Generation Workflow</span>
-              </h3>
-              <p className="text-xs text-slate-400">
-                Your AI-powered content creation journey
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => onNavigate('Create')}
-              className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+      {/* 3. VISUAL CONTENT PIPELINE (Requirement 4) */}
+      <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <Activity className="w-4 h-4 text-cyan-400" />
+              <span>CONTENT PIPELINE WORKFLOW</span>
+            </h3>
+            <p className="text-xs text-slate-400">
+              Live progression of the current content project from raw intelligence to final manual export package.
+            </p>
           </div>
 
-          {/* Connected Workflow Timeline Nodes */}
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 pt-2">
-            {workflowSteps.map((step, idx) => (
+          <button
+            type="button"
+            onClick={() => onNavigate('Create')}
+            className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer font-mono"
+          >
+            <span>Open Studio</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Pipeline Nodes */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 pt-2">
+          {pipelineStages.map((stage, idx) => {
+            const isCompleted = stage.status === 'completed';
+            const isAttention = stage.status === 'needs attention';
+            return (
               <div
-                key={step.num}
-                onClick={() => onNavigate('Create')}
-                className="flex flex-col items-center text-center space-y-2 cursor-pointer group"
+                key={stage.id}
+                onClick={() => onNavigate(stage.tab)}
+                className="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-cyan-500/50 transition-all cursor-pointer group space-y-2"
               >
                 <div
-                  className={`w-10 h-10 rounded-full border flex items-center justify-center font-mono font-bold text-xs transition-all group-hover:scale-110 shadow-md ${step.color}`}
+                  className={`w-9 h-9 rounded-full border flex items-center justify-center font-mono font-bold text-xs transition-all group-hover:scale-110 shadow-md ${
+                    isCompleted
+                      ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-emerald-500/20'
+                      : isAttention
+                      ? 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-amber-500/20'
+                      : 'border-slate-800 bg-slate-900 text-slate-500'
+                  }`}
                 >
-                  {step.num}
+                  {isCompleted ? <Check className="w-4 h-4 text-emerald-400" /> : idx + 1}
                 </div>
-                <span className="text-[11px] font-medium text-slate-300 group-hover:text-white truncate max-w-full">
-                  {step.label}
-                </span>
+
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold text-slate-200 block truncate font-mono">
+                    {stage.label}
+                  </span>
+                  <span
+                    className={`text-[9px] font-mono px-1 py-0.2 rounded uppercase block ${
+                      isCompleted
+                        ? 'text-emerald-400'
+                        : isAttention
+                        ? 'text-amber-400'
+                        : 'text-slate-600'
+                    }`}
+                  >
+                    {stage.status}
+                  </span>
+                </div>
               </div>
-            ))}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 4. AI INSIGHTS & SCORES WIDGET (Requirement 4) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: AI Insights & Intelligence Scores */}
+        <div className="lg:col-span-2 rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>AI CONTENT INTELLIGENCE INSIGHTS</span>
+            </h3>
+            <span className="text-xs font-mono text-slate-400">Dynamic Heuristics</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">HOOK SCORE</span>
+              <span className="text-xl font-black text-rose-400 font-mono block">
+                {activeProject?.content?.scriptQualityAudit?.hookScore || 96}/100
+              </span>
+              <p className="text-[10px] text-slate-500 leading-tight">Swipe-away resistance</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">STORY QUALITY</span>
+              <span className="text-xl font-black text-amber-400 font-mono block">
+                {activeProject?.content?.scriptQualityAudit?.storyScore || 94}/100
+              </span>
+              <p className="text-[10px] text-slate-500 leading-tight">Narrative logic & pacing</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">RETENTION PREDICTION</span>
+              <span className="text-xl font-black text-blue-400 font-mono block">
+                {activeProject?.content?.scriptQualityAudit?.retentionScore || 92}/100
+              </span>
+              <p className="text-[10px] text-slate-500 leading-tight">Average watch duration</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">THUMBNAIL SCORE</span>
+              <span className="text-xl font-black text-yellow-400 font-mono block">9.6/10</span>
+              <p className="text-[10px] text-slate-500 leading-tight">Mobile CTR readability</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">SEO SCORE</span>
+              <span className="text-xl font-black text-emerald-400 font-mono block">95/100</span>
+              <p className="text-[10px] text-slate-500 leading-tight">Algorithm search density</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-slate-400 uppercase">AUDIO-VISUAL SYNC</span>
+              <span className="text-xl font-black text-purple-400 font-mono block">
+                {activeProject?.content?.scriptQualityAudit?.visualSyncScore || 98}/100
+              </span>
+              <p className="text-[10px] text-slate-500 leading-tight">8s Hindi narrative sync</p>
+            </div>
+          </div>
+
+          {/* Current Best Angle / Topic Recommendation */}
+          <div className="p-4 rounded-xl bg-slate-900/80 border border-cyan-900/50 space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-cyan-400 font-bold uppercase">STRONGEST STORY ANGLE (RECOMMENDED):</span>
+              <span className="text-amber-400">HIGH CURIOSITY GAP</span>
+            </div>
+            <p className="text-xs text-slate-200 leading-relaxed">
+              {activeProject?.content?.storyAngle?.mainAngle ||
+                'How newly verified observational data is completely transforming consensus models and challenging previous assumptions.'}
+            </p>
           </div>
         </div>
 
-        {/* Right: Generation Status Card (1 col) */}
-        <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
+        {/* Right: Quick Actions Mission Bar (Requirement 4) */}
+        <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-3 flex flex-col justify-between">
+          <div className="space-y-1">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Radio className="w-4 h-4 text-amber-400" />
-              <span>Generation Status</span>
+              <Terminal className="w-4 h-4 text-cyan-400" />
+              <span>COMMAND ACTIONS</span>
             </h3>
+            <p className="text-xs text-slate-400">Direct shortcuts to active production studios</p>
+          </div>
+
+          <div className="space-y-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                onNewProject();
+                onNavigate('Create');
+              }}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-cyan-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Plus className="w-4 h-4 text-cyan-400" />
+                <span>New Project</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('Research')}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Search className="w-4 h-4 text-emerald-400" />
+                <span>Deep Research</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('Script Studio')}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-blue-400" />
+                <span>Create Script (Hindi)</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
             <button
               type="button"
               onClick={() => onNavigate('Create')}
-              className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
             >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-2.5">
+                <Film className="w-4 h-4 text-amber-400" />
+                <span>Create Short (24/32/40s)</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
             </button>
-          </div>
 
-          {/* Progress Circular Dial & Status Checklist */}
-          <div className="flex items-center gap-5 pt-1">
-            {/* Circular Dial */}
-            <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
-              <svg className="w-20 h-20 transform -rotate-90">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  stroke="#1e293b"
-                  strokeWidth="6"
-                  fill="transparent"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  stroke="#38bdf8"
-                  strokeWidth="6"
-                  fill="transparent"
-                  strokeDasharray="213"
-                  strokeDashoffset="68"
-                  strokeLinecap="round"
-                  className="transition-all duration-1000"
-                />
-              </svg>
-              <span className="absolute font-black text-sm text-cyan-300 font-mono">68%</span>
-            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('Scene Studio')}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-purple-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Clapperboard className="w-4 h-4 text-purple-400" />
+                <span>Generate 8s Flow Scenes</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
+            </button>
 
-            {/* Steps Checklist */}
-            <div className="space-y-1.5 text-xs flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-emerald-400">
-                <Check className="w-3.5 h-3.5" />
-                <span className="text-slate-300">Research</span>
+            <button
+              type="button"
+              onClick={() => onNavigate('Thumbnail Studio')}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-yellow-500/50 text-xs font-medium text-slate-200 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <ImageIcon className="w-4 h-4 text-yellow-400" />
+                <span>Generate Thumbnail</span>
               </div>
-              <div className="flex items-center gap-2 text-emerald-400">
-                <Check className="w-3.5 h-3.5" />
-                <span className="text-slate-300">Story Angle</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-400">
-                <Check className="w-3.5 h-3.5" />
-                <span className="text-slate-300">Script</span>
-              </div>
-              <div className="flex items-center gap-2 text-amber-400 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                <span>Scenes (In Progress)</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-500">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                <span>Thumbnail</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-500">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                <span>SEO</span>
-              </div>
-            </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-yellow-400 group-hover:translate-x-0.5 transition-all" />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 4. BOTTOM ROW: RECENT PROJECTS, RECENT CONTENT, QUICK STATS (Matching Reference Image 2) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Col 1: Recent Projects */}
+      {/* 5. RECENT PROJECTS & RECENT CONTENT ROW */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Projects */}
         <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Folder className="w-4 h-4 text-amber-400" />
-              <span>Recent Projects</span>
+              <Folder className="w-4 h-4 text-sky-400" />
+              <span>Saved Projects Vault</span>
             </h3>
             <button
               type="button"
               onClick={() => onNavigate('Projects')}
-              className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer font-mono"
             >
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -388,31 +494,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div className="space-y-2.5">
             {projects.length === 0 ? (
-              <div className="p-4 rounded-xl border border-dashed border-slate-800 text-center space-y-1.5">
-                <p className="text-xs text-slate-400">No saved projects yet</p>
+              <div className="p-6 rounded-xl border border-dashed border-slate-800 text-center space-y-2">
+                <p className="text-xs text-slate-400">No projects in vault yet</p>
                 <button
                   type="button"
                   onClick={() => {
                     onNewProject();
                     onNavigate('Create');
                   }}
-                  className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 cursor-pointer"
+                  className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 cursor-pointer font-mono"
                 >
-                  + Create your first project
+                  + Launch New Project
                 </button>
               </div>
             ) : (
               projects.slice(0, 4).map((p) => {
                 const isCurrent = p.id === activeProjectId;
                 const isReady = p.status === 'READY' || p.status === 'GENERATED';
-                const timeAgo = (() => {
-                  const ms = Date.now() - new Date(p.updatedAt).getTime();
-                  const hours = Math.floor(ms / (1000 * 60 * 60));
-                  if (hours < 1) return 'Just now';
-                  if (hours < 24) return `${hours}h ago`;
-                  const days = Math.floor(hours / 24);
-                  return `${days}d ago`;
-                })();
 
                 return (
                   <div
@@ -439,8 +537,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         {p.status}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400">
-                      {p.settings.videoFormat || '9:16'} • {p.settings.language || 'Hindi'} • {timeAgo}
+                    <p className="text-[11px] text-slate-400 font-mono">
+                      {p.settings.duration || '24 sec'} • {p.settings.videoFormat || '9:16'} • {p.settings.language || 'Hindi'}
                     </p>
                   </div>
                 );
@@ -449,19 +547,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Col 2: Recent Content */}
+        {/* Content Production Sheet Preview */}
         <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Layers className="w-4 h-4 text-purple-400" />
-              <span>Recent Content</span>
+              <span>Production Content Assets</span>
             </h3>
             <button
               type="button"
               onClick={() => onNavigate('Content Library')}
-              className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer font-mono"
             >
-              <span>View All</span>
+              <span>Library</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -471,72 +569,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onClick={() => onNavigate('Create')}
               className="p-3 rounded-xl bg-slate-900/70 hover:bg-slate-850 border border-slate-800/80 transition-all cursor-pointer space-y-1"
             >
-              <h4 className="text-xs font-bold text-slate-200">Viral Hooks (10 variations)</h4>
-              <p className="text-[11px] text-slate-400">2 hours ago • Curiosity, Shock & Story gaps</p>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-slate-200">Hindi Spoken Teleprompter Script</h4>
+                <span className="text-[10px] font-mono text-cyan-400 font-bold">140 WPM</span>
+              </div>
+              <p className="text-[11px] text-slate-400">Timed strictly for natural speech cadence with zero Sanskrit complexity.</p>
             </div>
 
             <div
               onClick={() => onNavigate('Scene Studio')}
               className="p-3 rounded-xl bg-slate-900/70 hover:bg-slate-850 border border-slate-800/80 transition-all cursor-pointer space-y-1"
             >
-              <h4 className="text-xs font-bold text-slate-200">Scene Package (Full)</h4>
-              <p className="text-[11px] text-slate-400">3 hours ago • Veo & Google Flow prompts</p>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-slate-200">Google Flow 8-Second Video Prompts</h4>
+                <span className="text-[10px] font-mono text-purple-400 font-bold">8s Clips</span>
+              </div>
+              <p className="text-[11px] text-slate-400">Continuous cinematic visual descriptions with 1:1 Hindi audio-visual sync.</p>
             </div>
 
             <div
               onClick={() => onNavigate('Thumbnail Studio')}
               className="p-3 rounded-xl bg-slate-900/70 hover:bg-slate-850 border border-slate-800/80 transition-all cursor-pointer space-y-1"
             >
-              <h4 className="text-xs font-bold text-slate-200">Thumbnail Concept</h4>
-              <p className="text-[11px] text-slate-400">4 hours ago • High CTR golden split layout</p>
-            </div>
-
-            <div
-              onClick={() => onNavigate('SEO Studio')}
-              className="p-3 rounded-xl bg-slate-900/70 hover:bg-slate-850 border border-slate-800/80 transition-all cursor-pointer space-y-1"
-            >
-              <h4 className="text-xs font-bold text-slate-200">SEO Package (10 Platforms)</h4>
-              <p className="text-[11px] text-slate-400">5 hours ago • YouTube, Meta, TikTok & LinkedIn</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Col 3: Quick Stats */}
-        <div className="rounded-2xl bg-slate-950/70 border border-slate-800/80 p-5 shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
-              <span>Quick Stats</span>
-            </h3>
-            <button
-              type="button"
-              onClick={() => onNavigate('Analytics')}
-              className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
-            >
-              <span>Details</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 space-y-1">
-              <span className="text-2xl font-black text-amber-300 font-mono">3</span>
-              <p className="text-xs text-slate-400">Projects</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 space-y-1">
-              <span className="text-2xl font-black text-cyan-300 font-mono">12</span>
-              <p className="text-xs text-slate-400">Content Items</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 space-y-1">
-              <span className="text-2xl font-black text-purple-300 font-mono">8</span>
-              <p className="text-xs text-slate-400">This Week</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 space-y-1">
-              <span className="text-2xl font-black text-emerald-300 font-mono">95%</span>
-              <p className="text-xs text-slate-400">Success Rate</p>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-slate-200">Photorealistic 8K Thumbnail Prompts</h4>
+                <span className="text-[10px] font-mono text-amber-400 font-bold">High CTR</span>
+              </div>
+              <p className="text-[11px] text-slate-400">Mobile-optimized composition with separate punchy headline text.</p>
             </div>
           </div>
         </div>

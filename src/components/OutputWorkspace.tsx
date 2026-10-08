@@ -84,7 +84,7 @@ const PRIMARY_TABS: { id: OutputTab; label: string; icon: React.ReactNode }[] = 
   { id: 'Scenes', label: '6. Scenes', icon: <Clapperboard className="w-4 h-4 text-purple-400" /> },
   { id: 'Thumbnail', label: '7. Thumbnail', icon: <ImageIcon className="w-4 h-4 text-amber-400" /> },
   { id: 'SEO', label: '8. SEO', icon: <Tag className="w-4 h-4 text-emerald-400" /> },
-  { id: 'Publish Ready', label: '9. Publish', icon: <Send className="w-4 h-4 text-emerald-400" /> },
+  { id: 'Publish Ready', label: '9. Final Package', icon: <Send className="w-4 h-4 text-emerald-400" /> },
   { id: 'Overview', label: 'Package', icon: <Layers className="w-4 h-4 text-cyan-400" /> },
 ];
 

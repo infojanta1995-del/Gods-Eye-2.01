@@ -61,6 +61,9 @@ const CONTENT_TYPES: { name: ContentType; badge: string; desc: string }[] = [
 ];
 
 const DURATIONS: Duration[] = [
+  '24 sec',
+  '32 sec',
+  '40 sec',
   '15 sec',
   '30 sec',
   '45 sec',
@@ -206,10 +209,10 @@ export const StudioControls: React.FC<StudioControlsProps> = ({
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-semibold text-white tracking-wide flex items-center gap-2">
-                3. DURATION
+                3. DURATION & 8-SECOND FLOW SYSTEM
               </h2>
               <p className="text-xs text-slate-400">
-                Target pacing will automatically scale scene count and teleprompter word rate
+                Google Flow 8-second clip architecture (3×8=24s, 4×8=32s, 5×8=40s) with synchronized Hindi voice-over.
               </p>
             </div>
           </div>
@@ -218,7 +221,37 @@ export const StudioControls: React.FC<StudioControlsProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+        {/* Highlighted Google Flow 8s Blocks */}
+        <div className="mb-3 p-3 rounded-xl bg-slate-950/80 border border-cyan-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-xs font-mono text-cyan-300 font-bold uppercase tracking-wider">
+              GOOGLE FLOW 8S BLOCKS:
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {(['24 sec', '32 sec', '40 sec'] as Duration[]).map((dur) => {
+              const isSelected = duration === dur;
+              const clips = dur === '24 sec' ? '3 Clips' : dur === '32 sec' ? '4 Clips' : '5 Clips';
+              return (
+                <button
+                  key={dur}
+                  type="button"
+                  onClick={() => onChangeDuration(dur)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
+                      : 'bg-slate-900 text-cyan-300 border border-cyan-800/60 hover:bg-slate-800'
+                  }`}
+                >
+                  {dur} <span className="opacity-75 font-normal text-[10px]">({clips})</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
           {DURATIONS.map((dur) => {
             const isSelected = duration === dur;
             return (

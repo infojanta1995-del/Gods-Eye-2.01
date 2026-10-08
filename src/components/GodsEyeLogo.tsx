@@ -322,9 +322,9 @@ export const GodsEyeLogo: React.FC<GodsEyeLogoProps> = ({
               EYE
             </span>
 
-            {/* "V2.0" in Gold Pill */}
+            {/* "V3.0" in Gold Pill */}
             <span className="font-mono font-bold text-[10px] sm:text-xs text-amber-300 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-600/50 shadow-sm shadow-amber-500/20">
-              V2.0
+              V3.0
             </span>
           </div>
 
@@ -335,7 +335,7 @@ export const GodsEyeLogo: React.FC<GodsEyeLogoProps> = ({
             </span>
           ) : (
             <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">
-              AI CREATOR STUDIO
+              AI COMMAND CENTER
             </span>
           )}
         </div>

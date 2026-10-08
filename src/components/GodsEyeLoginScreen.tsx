@@ -134,7 +134,7 @@ export const GodsEyeLoginScreen: React.FC<GodsEyeLoginScreenProps> = ({
               EYE
             </span>
             <span className="text-xs font-mono font-bold text-amber-300 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-600/50">
-              V2.0
+              V3.0
             </span>
           </div>
 

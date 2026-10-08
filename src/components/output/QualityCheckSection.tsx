@@ -146,7 +146,7 @@ export const QualityCheckSection: React.FC<QualityCheckSectionProps> = ({
 
   const handleCopyReport = () => {
     const report = `==================================================
-GOD'S EYE V2.0 — SCRIPT DOCTOR AI AUDIT REPORT
+GOD'S EYE V3.0 — SCRIPT DOCTOR AI AUDIT REPORT
 ==================================================
 OVERALL QUALITY SCORE: ${qualityCheck.overallScore}/10
 FACTUAL INTEGRITY: ${qualityCheck.factualIntegrityVerified ? 'VERIFIED (100% Truthful)' : 'Pending'}

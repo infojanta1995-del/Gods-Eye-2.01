@@ -53,7 +53,10 @@ import {
 } from './services/authService';
 import { DashboardView } from './components/views/DashboardView';
 import { ResearchView } from './components/views/ResearchView';
+import { ScriptView } from './components/views/ScriptView';
 import { SceneStudioView } from './components/views/SceneStudioView';
+import { VoiceStudioView } from './components/views/VoiceStudioView';
+import { StoryIntelligenceView } from './components/views/StoryIntelligenceView';
 import { ThumbnailStudioView } from './components/views/ThumbnailStudioView';
 import { SeoStudioView } from './components/views/SeoStudioView';
 import { YouTubeView } from './components/views/YouTubeView';
@@ -70,6 +73,7 @@ import { TrendIntelligenceView } from './components/views/TrendIntelligenceView'
 import { ContentAnalyticsView } from './components/views/ContentAnalyticsView';
 import { AccountView } from './components/views/AccountView';
 import { AiSettingsView } from './components/views/AiSettingsView';
+import { ShortCreatorView } from './components/views/ShortCreatorView';
 import { ContextualRightPanel } from './components/ContextualRightPanel';
 import { Sparkles } from 'lucide-react';
 
@@ -78,13 +82,13 @@ const INITIAL_CONFIG: StudioConfig = {
   sourceUrl: '',
   storyContent: '',
   contentType: 'YouTube Short',
-  duration: '60 sec',
-  customDurationSeconds: 60,
+  duration: '24 sec',
+  customDurationSeconds: 24,
   videoFormat: '9:16 Portrait',
   language: 'Hindi', // Default Hindi as mandated
   contentStyle: 'Informative',
   mood: 'Neutral',
-  selectedPlatforms: ['YouTube Shorts', 'Instagram', 'YouTube'],
+  selectedPlatforms: ['YouTube Shorts', 'Instagram'],
 };
 
 export default function App() {
@@ -126,6 +130,7 @@ export default function App() {
   );
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const autoSaveTimerRef = useRef<any>(null);
+  const [creatorMode, setCreatorMode] = useState<'short' | 'classic'>('short');
 
   // Initialize projects on mount
   useEffect(() => {
@@ -740,7 +745,7 @@ export default function App() {
               />
             )}
 
-            {(activeTab === 'Create' || activeTab === 'Script') && (
+            {activeTab === 'Create' && (
               <>
                 {/* STEP 6: Active Project Bar (Rename inline, Status, Auto-save, Quick Actions) */}
                 <ActiveProjectBar
@@ -752,64 +757,170 @@ export default function App() {
                   isAutoSaving={isAutoSaving}
                 />
 
-                {/* 1. ARTICLE / STORY SECTION */}
-                <ArticleInputSection
-                  title={config.title}
-                  sourceUrl={config.sourceUrl}
-                  storyContent={config.storyContent}
-                  onChangeTitle={handleTitleChange}
-                  onChangeUrl={handleUrlChange}
-                  onChangeStory={handleStoryChange}
-                  onApplySample={handleApplySample}
-                  onClear={handleClearStory}
-                />
+                {/* Workspace Mode Switcher (Short Creator vs Full Studio Controls) */}
+                <div className="flex items-center justify-between p-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono shadow-lg">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      id="btn-switch-mode-short"
+                      onClick={() => setCreatorMode('short')}
+                      className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 font-bold ${
+                        creatorMode === 'short'
+                          ? 'bg-gradient-to-r from-cyan-500/20 via-cyan-500/10 to-amber-500/20 text-cyan-200 border border-cyan-500/40 shadow-md shadow-cyan-500/10'
+                          : 'text-slate-400 hover:text-white border border-transparent'
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>SHORT CREATOR (8s FLOW ENGINE)</span>
+                    </button>
+                    <button
+                      type="button"
+                      id="btn-switch-mode-classic"
+                      onClick={() => setCreatorMode('classic')}
+                      className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
+                        creatorMode === 'classic'
+                          ? 'bg-slate-800 text-white font-bold border border-slate-700 shadow-sm'
+                          : 'text-slate-400 hover:text-white border border-transparent'
+                      }`}
+                    >
+                      <span>ADVANCED STUDIO CONTROLS</span>
+                    </button>
+                  </div>
+                  <span className="hidden sm:inline text-[11px] text-slate-500 pr-2">
+                    {creatorMode === 'short' ? 'Precision 24s/32s/40s 8-Second Hindi Flow' : 'Multi-format full studio'}
+                  </span>
+                </div>
 
-                {/* 2-8. STUDIO CONTROLS SECTIONS */}
-                <StudioControls
-                  contentType={config.contentType}
-                  onChangeContentType={handleContentTypeChange}
-                  duration={config.duration}
-                  customDurationSeconds={config.customDurationSeconds || 60}
-                  onChangeDuration={handleDurationChange}
-                  onChangeCustomDurationSeconds={handleCustomDurationSecondsChange}
-                  videoFormat={config.videoFormat}
-                  onChangeVideoFormat={handleVideoFormatChange}
-                  language={config.language}
-                  onChangeLanguage={handleLanguageChange}
-                  contentStyle={config.contentStyle}
-                  onChangeContentStyle={handleContentStyleChange}
-                  mood={config.mood}
-                  onChangeMood={handleMoodChange}
-                  selectedPlatforms={config.selectedPlatforms}
-                  onTogglePlatform={handleTogglePlatform}
-                />
+                {creatorMode === 'short' ? (
+                  <ShortCreatorView
+                    currentProject={currentProject}
+                    projects={projects}
+                    aiResult={aiResult}
+                    config={config}
+                    onUpdateConfig={(partial) => {
+                      setConfig((prev) => ({ ...prev, ...partial }));
+                      triggerAutoSaveDraft({ ...config, ...partial });
+                    }}
+                    onUpdateAiResult={handleUpdateAiResult}
+                    onSaveProject={(p) => {
+                      saveProject(p);
+                      setProjects(getAllProjects());
+                    }}
+                    onNavigate={setActiveTab}
+                  />
+                ) : (
+                  <>
+                    {/* 1. ARTICLE / STORY SECTION */}
+                    <ArticleInputSection
+                      title={config.title}
+                      sourceUrl={config.sourceUrl}
+                      storyContent={config.storyContent}
+                      onChangeTitle={handleTitleChange}
+                      onChangeUrl={handleUrlChange}
+                      onChangeStory={handleStoryChange}
+                      onApplySample={handleApplySample}
+                      onClear={handleClearStory}
+                    />
 
-                {/* 9. MAIN BUTTON SECTION */}
-                <GenerateAction
-                  config={config}
-                  hasStoryContent={Boolean(config.storyContent.trim())}
-                  isLoading={isLoading}
-                  loadingStage={loadingStage}
-                  onGenerate={handleGenerate}
-                  statusMessage={statusMessage}
-                  errorMessage={errorMessage}
-                />
+                    {/* 2-8. STUDIO CONTROLS SECTIONS */}
+                    <StudioControls
+                      contentType={config.contentType}
+                      onChangeContentType={handleContentTypeChange}
+                      duration={config.duration}
+                      customDurationSeconds={config.customDurationSeconds || 60}
+                      onChangeDuration={handleDurationChange}
+                      onChangeCustomDurationSeconds={handleCustomDurationSecondsChange}
+                      videoFormat={config.videoFormat}
+                      onChangeVideoFormat={handleVideoFormatChange}
+                      language={config.language}
+                      onChangeLanguage={handleLanguageChange}
+                      contentStyle={config.contentStyle}
+                      onChangeContentStyle={handleContentStyleChange}
+                      mood={config.mood}
+                      onChangeMood={handleMoodChange}
+                      selectedPlatforms={config.selectedPlatforms}
+                      onTogglePlatform={handleTogglePlatform}
+                    />
 
-                {/* 10. OUTPUT WORKSPACE SECTION */}
-                <OutputWorkspace
-                  config={config}
-                  hasStoryContent={Boolean(config.storyContent.trim())}
-                  isInitialized={isOutputInitialized}
-                  aiResult={aiResult}
-                  isLoading={isLoading}
-                  projectName={currentProject.name}
-                  onRegenerate={handleGenerate}
-                  onRegenerateComponent={handleRegenerateComponent}
-                  onUpdateVideoFormat={handleVideoFormatChange}
-                  onUpdateAiResult={handleUpdateAiResult}
-                  onNavigateTab={setActiveTab}
-                />
+                    {/* 9. MAIN BUTTON SECTION */}
+                    <GenerateAction
+                      config={config}
+                      hasStoryContent={Boolean(config.storyContent.trim())}
+                      isLoading={isLoading}
+                      loadingStage={loadingStage}
+                      onGenerate={handleGenerate}
+                      statusMessage={statusMessage}
+                      errorMessage={errorMessage}
+                    />
+
+                    {/* 10. OUTPUT WORKSPACE SECTION */}
+                    <OutputWorkspace
+                      config={config}
+                      hasStoryContent={Boolean(config.storyContent.trim())}
+                      isInitialized={isOutputInitialized}
+                      aiResult={aiResult}
+                      isLoading={isLoading}
+                      projectName={currentProject.name}
+                      onRegenerate={handleGenerate}
+                      onRegenerateComponent={handleRegenerateComponent}
+                      onUpdateVideoFormat={handleVideoFormatChange}
+                      onUpdateAiResult={handleUpdateAiResult}
+                      onNavigateTab={setActiveTab}
+                    />
+                  </>
+                )}
               </>
+            )}
+
+            {activeTab === 'Short Production' && (
+              <ShortCreatorView
+                currentProject={currentProject}
+                projects={projects}
+                aiResult={aiResult}
+                config={config}
+                onUpdateConfig={(partial) => {
+                  setConfig((prev) => ({ ...prev, ...partial }));
+                  triggerAutoSaveDraft({ ...config, ...partial });
+                }}
+                onUpdateAiResult={handleUpdateAiResult}
+                onSaveProject={(p) => {
+                  saveProject(p);
+                  setProjects(getAllProjects());
+                }}
+                onNavigate={setActiveTab}
+              />
+            )}
+
+            {(activeTab === 'Script Studio' || activeTab === 'Script') && (
+              <ScriptView
+                activeProject={{
+                  ...currentProject,
+                  content: aiResult || currentProject.content,
+                }}
+                onNavigate={setActiveTab}
+              />
+            )}
+
+            {activeTab === 'Voice Studio' && (
+              <VoiceStudioView
+                activeProject={{
+                  ...currentProject,
+                  result: aiResult || currentProject.content,
+                  content: aiResult || currentProject.content,
+                }}
+                onNavigate={setActiveTab}
+                onUpdateAiResult={handleUpdateAiResult}
+              />
+            )}
+
+            {activeTab === 'Story Intelligence' && (
+              <StoryIntelligenceView
+                activeProject={{
+                  ...currentProject,
+                  content: aiResult || currentProject.content,
+                }}
+                onNavigate={setActiveTab}
+              />
             )}
 
             {activeTab === 'Scene Studio' && (
@@ -942,7 +1053,7 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'AI Settings' && (
+            {(activeTab === 'AI Settings' || activeTab === 'AI Models') && (
               <AiSettingsView />
             )}
 
@@ -1032,9 +1143,9 @@ export default function App() {
           <footer className="border-t border-slate-900 bg-[#07090e] py-6 mt-12 text-center text-xs text-slate-500">
             <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="flex items-center gap-1.5 font-medium text-slate-400">
-                <span>GOD'S EYE V2.0</span>
+                <span>GOD'S EYE V3.0</span>
                 <span>•</span>
-                <span className="text-slate-500">AI Creator Studio & Command Center</span>
+                <span className="text-slate-500">AI Content Command Center & Supercomputer</span>
               </p>
               <p className="text-slate-600 text-[11px]">
                 Server-Side Gemini 3.8 Flash Engine • Teleprompter Hindi Narration & Veo Prompts

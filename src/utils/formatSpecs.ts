@@ -204,7 +204,7 @@ export function formatAllScenesPackage(
   const sceneDivider = '-'.repeat(50);
 
   const header = `${divider}
-GOD'S EYE V2.0 — FULL PRODUCTION SCENE PACKAGE (ALL SCENES)
+GOD'S EYE V3.0 — FULL PRODUCTION SCENE PACKAGE (ALL SCENES)
 TOTAL SCENES: ${scenes.length}
 OUTPUT FORMAT: ${spec.outputFormat}
 ASPECT RATIO: ${spec.aspectRatio}

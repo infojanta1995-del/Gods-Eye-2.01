@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
+  Film,
 } from 'lucide-react';
 import { V2NavigationTab } from '../types';
 
@@ -61,36 +62,90 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   const navGroups: NavGroupDef[] = [
     {
+      title: 'COMMAND CENTER',
       items: [
         {
           id: 'Dashboard',
           label: 'Dashboard',
-          icon: <LayoutDashboard className="w-4 h-4" />,
+          icon: <LayoutDashboard className="w-4 h-4 text-cyan-400" />,
+        },
+        {
+          id: 'Create',
+          label: 'Short Creator',
+          icon: <Sparkles className="w-4 h-4 text-amber-400" />,
+          badge: '8s Flow',
+          badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+        },
+        {
+          id: 'Projects',
+          label: 'Projects',
+          icon: <Folder className="w-4 h-4 text-sky-400" />,
+          badge: projectsCount > 0 ? String(projectsCount) : undefined,
+          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+        },
+        {
+          id: 'Content Library',
+          label: 'Content Library',
+          icon: <Layers className="w-4 h-4 text-slate-400" />,
         },
       ],
     },
     {
-      title: 'CREATE',
+      title: 'INTELLIGENCE',
       items: [
         {
-          id: 'Create',
-          label: 'New Content',
-          icon: <Sparkles className="w-4 h-4 text-cyan-400" />,
-        },
-        {
           id: 'Research',
-          label: 'Research',
+          label: 'Research Workstation',
           icon: <Search className="w-4 h-4 text-emerald-400" />,
         },
         {
-          id: 'Script',
-          label: 'Script',
+          id: 'Trend Intelligence',
+          label: 'Trend Intelligence',
+          icon: <TrendingUp className="w-4 h-4 text-teal-400" />,
+        },
+        {
+          id: 'Story Intelligence',
+          label: 'Story Intelligence',
+          icon: <Brain className="w-4 h-4 text-blue-400" />,
+        },
+        {
+          id: 'AI Recommendations',
+          label: 'AI Recommendations',
+          icon: <Sparkles className="w-4 h-4 text-purple-400" />,
+        },
+        {
+          id: 'Analytics',
+          label: 'Analytics & Retention',
+          icon: <BarChart3 className="w-4 h-4 text-indigo-400" />,
+        },
+      ],
+    },
+    {
+      title: 'PRODUCTION',
+      items: [
+        {
+          id: 'Short Production',
+          label: 'Short Production Engine',
+          icon: <Film className="w-4 h-4 text-cyan-400" />,
+          badge: '8s Sync',
+          badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+        },
+        {
+          id: 'Script Studio',
+          label: 'Script Studio (Hindi)',
           icon: <FileText className="w-4 h-4 text-blue-400" />,
         },
         {
           id: 'Scene Studio',
-          label: 'Scene Studio',
+          label: 'Scene Studio (8s Veo)',
           icon: <Clapperboard className="w-4 h-4 text-purple-400" />,
+          badge: '8s Sync',
+          badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+        },
+        {
+          id: 'Voice Studio',
+          label: 'Voice Studio (TTS)',
+          icon: <Clock className="w-4 h-4 text-pink-400" />,
         },
         {
           id: 'Thumbnail Studio',
@@ -99,70 +154,28 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         },
         {
           id: 'SEO Studio',
-          label: 'SEO Studio',
-          icon: <TrendingUp className="w-4 h-4 text-pink-400" />,
+          label: 'SEO Studio (10+ Plt)',
+          icon: <TrendingUp className="w-4 h-4 text-emerald-400" />,
         },
       ],
     },
     {
-      title: 'PUBLISH',
+      title: 'SYSTEM',
       items: [
         {
-          id: 'YouTube',
-          label: 'YouTube',
-          icon: <Youtube className="w-4 h-4 text-red-500" />,
+          id: 'AI Models',
+          label: 'AI Models & Neural',
+          icon: <Brain className="w-4 h-4 text-cyan-400" />,
         },
         {
-          id: 'Facebook',
-          label: 'Facebook',
-          icon: <Facebook className="w-4 h-4 text-blue-500" />,
+          id: 'Connected Accounts',
+          label: 'Connected Accounts',
+          icon: <Folder className="w-4 h-4 text-slate-400" />,
         },
         {
-          id: 'Instagram',
-          label: 'Instagram',
-          icon: <Instagram className="w-4 h-4 text-pink-500" />,
-        },
-        {
-          id: 'Scheduler',
-          label: 'Scheduler',
-          icon: <Calendar className="w-4 h-4 text-indigo-400" />,
-        },
-      ],
-    },
-    {
-      title: 'INTELLIGENCE',
-      items: [
-        {
-          id: 'Analytics',
-          label: 'Analytics',
-          icon: <BarChart3 className="w-4 h-4 text-teal-400" />,
-        },
-        {
-          id: 'AI Recommendations',
-          label: 'AI Recommendations',
-          icon: <Brain className="w-4 h-4 text-purple-400" />,
-        },
-      ],
-    },
-    {
-      title: 'LIBRARY',
-      items: [
-        {
-          id: 'Projects',
-          label: 'Projects',
-          icon: <Folder className="w-4 h-4 text-amber-400" />,
-          badge: projectsCount > 0 ? String(projectsCount) : undefined,
-          badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-        },
-        {
-          id: 'Content Library',
-          label: 'Content Library',
-          icon: <Layers className="w-4 h-4 text-slate-400" />,
-        },
-        {
-          id: 'History',
-          label: 'History',
-          icon: <Clock className="w-4 h-4 text-slate-400" />,
+          id: 'Settings',
+          label: 'System Settings',
+          icon: <SettingsIcon className="w-4 h-4 text-slate-400" />,
         },
       ],
     },
@@ -187,7 +200,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             )}
 
             {group.items.map((item) => {
-              const isActive = activeTab === item.id;
+              const isActive =
+                activeTab === item.id ||
+                (item.id === 'Script Studio' && activeTab === 'Script') ||
+                (item.id === 'AI Models' && activeTab === 'AI Settings');
               return (
                 <button
                   key={item.id}
@@ -197,11 +213,11 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
                   title={isCollapsed ? item.label : undefined}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                     isActive
-                      ? 'border border-amber-500/80 bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] font-semibold'
+                      ? 'border border-cyan-500/80 bg-gradient-to-r from-cyan-500/20 via-cyan-500/10 to-transparent text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.2)] font-semibold'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
                   }`}
                 >
-                  <span className={`flex-shrink-0 ${isActive ? 'text-amber-400' : ''}`}>
+                  <span className={`flex-shrink-0 ${isActive ? 'text-cyan-400' : ''}`}>
                     {item.icon}
                   </span>
 

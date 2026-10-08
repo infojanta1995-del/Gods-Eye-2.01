@@ -12,7 +12,7 @@ import {
 import { GodsEyeLogo } from '../GodsEyeLogo';
 
 export const AiSettingsView: React.FC = () => {
-  const [model, setModel] = useState<'gemini-2.5-flash' | 'gemini-2.5-pro'>('gemini-2.5-flash');
+  const [model, setModel] = useState<'gemini-3.8-flash' | 'gemini-3.1-pro-preview'>('gemini-3.8-flash');
   const [temperature, setTemperature] = useState<number>(0.7);
   const [defaultLanguage, setDefaultLanguage] = useState<'Hindi' | 'Hinglish' | 'English'>('Hindi');
   const [videoWorkflow, setVideoWorkflow] = useState<string>('Google Flow / Veo');
@@ -33,11 +33,11 @@ export const AiSettingsView: React.FC = () => {
               <Sliders className="w-5 h-5" />
             </div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-white font-heading">
-              AI Generation & Model Settings
+              AI Models & Neural Command Settings
             </h1>
           </div>
           <p className="text-xs text-slate-400">
-            Configure Gemini neural parameters, default teleprompter language, and video prompt calibration
+            Centralized Google AI Studio Gemini model configuration, spoken Hindi cadence calibration, and Google Flow 8s block tuning
           </p>
         </div>
 
@@ -62,47 +62,47 @@ export const AiSettingsView: React.FC = () => {
       <div className="p-6 rounded-2xl bg-[#0c101a] border border-slate-800 space-y-4 shadow-xl">
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <Cpu className="w-4 h-4 text-cyan-400" />
-          <h3 className="text-sm font-bold text-white">Gemini Model Selection</h3>
+          <h3 className="text-sm font-bold text-white">Google Gemini Neural Core</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => setModel('gemini-2.5-flash')}
+            onClick={() => setModel('gemini-3.8-flash')}
             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-              model === 'gemini-2.5-flash'
+              model === 'gemini-3.8-flash'
                 ? 'bg-cyan-950/60 border-cyan-500/60 text-white shadow-sm shadow-cyan-500/20'
                 : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="font-bold text-sm text-white">Gemini 3.8 Flash</span>
+              <span className="font-bold text-sm text-white">gemini-3.8-flash</span>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
-                RECOMMENDED
+                ACTIVE / RECOMMENDED
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Ultra-fast generation (~380ms), ideal for high-throughput teleprompter scripts, hooks, and Veo scene prompts.
+              Ultra-fast generation (~340ms), optimal for rapid Hindi scripts, hooks, and 8-second Google Flow scene prompts.
             </p>
           </button>
 
           <button
             type="button"
-            onClick={() => setModel('gemini-2.5-pro')}
+            onClick={() => setModel('gemini-3.1-pro-preview')}
             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-              model === 'gemini-2.5-pro'
+              model === 'gemini-3.1-pro-preview'
                 ? 'bg-purple-950/60 border-purple-500/60 text-white shadow-sm shadow-purple-500/20'
                 : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="font-bold text-sm text-white">Gemini 3.5 Pro</span>
+              <span className="font-bold text-sm text-white">gemini-3.1-pro-preview</span>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
                 DEEP THINKING
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Deep research synthesis, extended reasoning for complex multi-chapter documentary formats.
+              Extended reasoning and deep research synthesis for complex multi-faceted investigative content.
             </p>
           </button>
         </div>
