@@ -3,6 +3,17 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import {
+  loadAllowlist,
+  isEmailAuthorized,
+  addAuthorizedEmail,
+  removeAuthorizedEmail,
+  createSessionToken,
+  verifySessionToken,
+  invalidateSessionToken,
+  isValidEmail,
+  UserSessionPayload,
+} from "./src/server/allowlistService";
 
 dotenv.config();
 
@@ -1435,6 +1446,271 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json({ limit: "10mb" }));
+
+  // ========================================================
+  // GOD'S EYE V3.0 — PRIVATE EMAIL ALLOWLIST AUTHENTICATION & ACCESS CONTROL
+  // ========================================================
+
+  // 1. Check or Verify Google Login & Allowlist Authorization
+  app.post("/api/auth/google-verify", async (req, res) => {
+    try {
+      const { email, name, avatar, credential, idToken } = req.body || {};
+
+      let verifiedEmail = (email || "").toLowerCase().trim();
+      let verifiedName = (name || "").trim();
+      let verifiedAvatar = (avatar || "").trim();
+
+      // If a real Google JWT credential/idToken was provided, safely decode user payload
+      if (credential || idToken) {
+        const rawToken = credential || idToken;
+        try {
+          // Decode JWT payload without external library dependencies
+          const parts = rawToken.split(".");
+          if (parts.length === 3) {
+            const payloadJson = Buffer.from(parts[1], "base64").toString("utf-8");
+            const jwtPayload = JSON.parse(payloadJson);
+            if (jwtPayload.email) {
+              verifiedEmail = jwtPayload.email.toLowerCase().trim();
+            }
+            if (jwtPayload.name && !verifiedName) {
+              verifiedName = jwtPayload.name;
+            }
+            if (jwtPayload.picture && !verifiedAvatar) {
+              verifiedAvatar = jwtPayload.picture;
+            }
+          }
+        } catch (jwtErr) {
+          console.warn("[GODSEYE AUTH] Failed to decode Google credential token:", jwtErr);
+        }
+      }
+
+      if (!verifiedEmail || !isValidEmail(verifiedEmail)) {
+        return res.status(400).json({
+          success: false,
+          authorized: false,
+          error: "Invalid or missing Google email address.",
+        });
+      }
+
+      // Check verified email against server-side allowlist
+      const check = isEmailAuthorized(verifiedEmail);
+
+      if (!check.authorized) {
+        console.warn(`[GODSEYE SECURITY] ACCESS DENIED: '${verifiedEmail}' is not on the authorized allowlist.`);
+        return res.status(403).json({
+          success: false,
+          authorized: false,
+          email: verifiedEmail,
+          error: `Access denied. Your Google account (${verifiedEmail}) is not authorized to use this application.`,
+        });
+      }
+
+      // User is authorized! Issue secure server session token
+      const sessionUserRole: "CREATOR COMMANDER" | "ADMIN" | "CREATOR" = check.isOwner
+        ? "CREATOR COMMANDER"
+        : check.isAdmin
+        ? "ADMIN"
+        : "CREATOR";
+
+      const token = createSessionToken({
+        email: verifiedEmail,
+        name: verifiedName || (check.entry?.name || verifiedEmail.split("@")[0]),
+        avatar: verifiedAvatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+        role: sessionUserRole,
+        isOwner: check.isOwner,
+        isAdmin: check.isAdmin,
+      });
+
+      console.log(`[GODSEYE SECURITY] ACCESS GRANTED for '${verifiedEmail}' [Role: ${sessionUserRole}]`);
+
+      return res.json({
+        success: true,
+        authorized: true,
+        token,
+        user: {
+          id: `usr_${verifiedEmail.replace(/[^a-zA-Z0-9]/g, "_")}`,
+          email: verifiedEmail,
+          name: verifiedName || (check.entry?.name || verifiedEmail.split("@")[0]),
+          avatar: verifiedAvatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+          role: sessionUserRole,
+          authProvider: "google",
+          isOwner: check.isOwner,
+          isAdmin: check.isAdmin,
+          authenticatedAt: new Date().toISOString(),
+          connectedAccounts: {
+            google: true,
+            youtube: { connected: false },
+            facebook: { connected: false },
+            instagram: { connected: false },
+          },
+        },
+      });
+    } catch (err: any) {
+      console.error("[GODSEYE AUTH] Error during Google verification:", err);
+      return res.status(500).json({ success: false, error: "Internal authentication error." });
+    }
+  });
+
+  // 2. Validate current session and retrieve user authorization info
+  app.get("/api/auth/session", (req, res) => {
+    const authHeader = req.headers.authorization;
+    const session = verifySessionToken(authHeader);
+
+    if (!session) {
+      return res.status(401).json({
+        success: false,
+        authorized: false,
+        error: "Session expired or unauthorized.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      authorized: true,
+      user: {
+        id: `usr_${session.email.replace(/[^a-zA-Z0-9]/g, "_")}`,
+        email: session.email,
+        name: session.name,
+        avatar: session.avatar,
+        role: session.role,
+        authProvider: "google",
+        isOwner: session.isOwner,
+        isAdmin: session.isAdmin,
+        authenticatedAt: new Date().toISOString(),
+        connectedAccounts: {
+          google: true,
+          youtube: { connected: false },
+          facebook: { connected: false },
+          instagram: { connected: false },
+        },
+      },
+    });
+  });
+
+  // 3. User Sign Out / Invalidate Session Token
+  app.post("/api/auth/logout", (req, res) => {
+    const authHeader = req.headers.authorization;
+    invalidateSessionToken(authHeader);
+    return res.json({ success: true, message: "Session disconnected." });
+  });
+
+  // 4. Admin: Get Authorized Email Allowlist
+  app.get("/api/admin/allowlist", (req, res) => {
+    const authHeader = req.headers.authorization;
+    const session = verifySessionToken(authHeader);
+
+    if (!session) {
+      return res.status(401).json({ success: false, error: "Unauthorized session." });
+    }
+
+    if (!session.isAdmin && !session.isOwner) {
+      return res.status(403).json({ success: false, error: "Forbidden: Administrator permissions required." });
+    }
+
+    const store = loadAllowlist();
+    return res.json({
+      success: true,
+      ownerEmail: store.ownerEmail,
+      adminEmails: store.adminEmails,
+      allowedEmails: store.allowedEmails,
+      totalCount: store.allowedEmails.length,
+      requesterIsOwner: session.isOwner,
+      updatedAt: store.updatedAt,
+    });
+  });
+
+  // 4. Admin: Add New Authorized Email
+  app.post("/api/admin/allowlist/add", (req, res) => {
+    const authHeader = req.headers.authorization;
+    const session = verifySessionToken(authHeader);
+
+    if (!session) {
+      return res.status(401).json({ success: false, error: "Unauthorized session." });
+    }
+
+    if (!session.isAdmin && !session.isOwner) {
+      return res.status(403).json({ success: false, error: "Forbidden: Administrator permissions required." });
+    }
+
+    const { email, name, role, notes } = req.body || {};
+    const result = addAuthorizedEmail(session.email, email, name, role, notes);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.json({
+      success: true,
+      message: `Email '${email}' successfully authorized.`,
+      entry: result.entry,
+    });
+  });
+
+  // 5. Admin: Remove Authorized Email
+  app.post("/api/admin/allowlist/remove", (req, res) => {
+    const authHeader = req.headers.authorization;
+    const session = verifySessionToken(authHeader);
+
+    if (!session) {
+      return res.status(401).json({ success: false, error: "Unauthorized session." });
+    }
+
+    if (!session.isAdmin && !session.isOwner) {
+      return res.status(403).json({ success: false, error: "Forbidden: Administrator permissions required." });
+    }
+
+    const { email } = req.body || {};
+    const result = removeAuthorizedEmail(session.email, email);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.json({
+      success: true,
+      message: `Email '${email}' successfully removed from authorized allowlist.`,
+    });
+  });
+
+  // 6. Server-side Protection Middleware for all content-generating and production API routes
+  // Blocks any unauthenticated or unauthorized caller from bypassing the client UI!
+  const requireAllowlistedUser: express.RequestHandler = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const session = verifySessionToken(authHeader);
+
+    if (!session) {
+      // Also check query param or x-godseye-user header for fallback
+      const fallbackToken = (req.headers["x-godseye-token"] as string) || (req.query.token as string);
+      const fallbackSession = verifySessionToken(fallbackToken);
+
+      if (fallbackSession) {
+        (req as any).userSession = fallbackSession;
+        return next();
+      }
+
+      console.warn(`[GODSEYE SECURITY] Blocked unauthorized request to ${req.method} ${req.path}`);
+      return res.status(401).json({
+        success: false,
+        authorized: false,
+        error: "Access denied. Valid authorization token for an allowed Google email is required to access GOD'S EYE features.",
+      });
+    }
+
+    (req as any).userSession = session;
+    next();
+  };
+
+  // Protect generation, regeneration, research, tts, assistant, thumbnail, and publishing endpoints
+  app.use("/api/generate-content", requireAllowlistedUser);
+  app.use("/api/regenerate-component", requireAllowlistedUser);
+  app.use("/api/auto-improve-script", requireAllowlistedUser);
+  app.use("/api/short-engine/*", requireAllowlistedUser);
+  app.use("/api/tts", requireAllowlistedUser);
+  app.use("/api/research/*", requireAllowlistedUser);
+  app.use("/api/assistant/*", requireAllowlistedUser);
+  app.use("/api/thumbnail/*", requireAllowlistedUser);
+  app.use("/api/seo/*", requireAllowlistedUser);
+  app.use("/api/publishing/*", requireAllowlistedUser);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {

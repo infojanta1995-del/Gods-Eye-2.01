@@ -1,0 +1,42 @@
+[
+  {
+    "email": "andycrepto@gmail.com",
+    "name": "Andy Crepto",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+    "role": "CREATOR COMMANDER",
+    "isOwner": true,
+    "isAdmin": true,
+    "token": "ge_48324b88d61bee7f731be5a32e37a9cb602206a306e2a3847a7d5220236fb1f1",
+    "expiresAt": 1792152853400
+  },
+  {
+    "email": "andycrepto@gmail.com",
+    "name": "Andy Crepto",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+    "role": "CREATOR COMMANDER",
+    "isOwner": true,
+    "isAdmin": true,
+    "token": "ge_f3ed3d23d2eb0c4008f8e58b1f01a5c830aeb2e8e21efe90d6c5afa989b73f10",
+    "expiresAt": 1792153106724
+  },
+  {
+    "email": "andycrepto@gmail.com",
+    "name": "Andy Crepto",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+    "role": "CREATOR COMMANDER",
+    "isOwner": true,
+    "isAdmin": true,
+    "token": "ge_3021917506dd93c8a6884b922084859bcad6b9441eb5f8ed2f5fd16d5a695992",
+    "expiresAt": 1792153121443
+  },
+  {
+    "email": "andycrepto@gmail.com",
+    "name": "Andy Crepto",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+    "role": "CREATOR COMMANDER",
+    "isOwner": true,
+    "isAdmin": true,
+    "token": "ge_f7da8c391c3d31b711efa05ce5eb1cd4b8b586bb03664086b81b3e39c563f3b4",
+    "expiresAt": 1792153140981
+  }
+]

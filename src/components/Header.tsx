@@ -151,12 +151,12 @@ export const Header: React.FC<HeaderProps> = ({
           {showUserMenu && (
             <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#090d16] border border-slate-800 shadow-2xl p-2 z-50 animate-fadeIn text-xs">
               <div className="px-3 py-2 border-b border-slate-800 mb-1">
-                <p className="font-bold text-white">{currentUser?.name || 'Creator'}</p>
+                <p className="font-bold text-white">{currentUser?.name || 'Authorized Creator'}</p>
                 <p className="text-slate-400 text-[11px] truncate">
-                  {currentUser?.email || 'andycrepto@gmail.com'}
+                  {currentUser?.email || 'Authenticated User'}
                 </p>
                 <span className="inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/40">
-                  {currentUser?.role || 'CREATOR COMMANDER'}
+                  {currentUser?.role || 'CREATOR'}
                 </span>
               </div>
 

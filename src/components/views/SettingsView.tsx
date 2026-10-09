@@ -12,16 +12,19 @@ import {
   Lock,
 } from 'lucide-react';
 import { V2NavigationTab } from '../../types';
-import { fetchServerAuthStatus, ServerAuthStatus } from '../../services/authService';
+import { fetchServerAuthStatus, ServerAuthStatus, GodseyeUser } from '../../services/authService';
+import { AuthorizedEmailsManager } from './AuthorizedEmailsManager';
 
 interface SettingsViewProps {
   onOpenThemeModal: () => void;
   onNavigate: (tab: V2NavigationTab) => void;
+  currentUser?: GodseyeUser | null;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   onOpenThemeModal,
   onNavigate,
+  currentUser,
 }) => {
   const [serverStatus, setServerStatus] = useState<ServerAuthStatus | null>(null);
 
@@ -210,6 +213,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* GOD'S EYE V3.0 PRIVATE ALLOWLIST ACCESS CONTROL */}
+      <AuthorizedEmailsManager currentUser={currentUser || null} />
     </div>
   );
 };

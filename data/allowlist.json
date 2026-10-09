@@ -1,0 +1,17 @@
+{
+  "ownerEmail": "andycrepto@gmail.com",
+  "adminEmails": [
+    "andycrepto@gmail.com"
+  ],
+  "allowedEmails": [
+    {
+      "email": "andycrepto@gmail.com",
+      "name": "Andy Crepto",
+      "role": "OWNER",
+      "addedAt": "2026-10-08T19:12:01.929Z",
+      "addedBy": "SYSTEM_BOOT",
+      "notes": "Project Founder & Master Commander"
+    }
+  ],
+  "updatedAt": "2026-10-09T12:19:01.008Z"
+}

@@ -188,8 +188,11 @@ export const SupercomputerTopBar: React.FC<SupercomputerTopBarProps> = ({
           {showUserDropdown && (
             <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#070e1b] border border-cyan-900/80 shadow-2xl p-2 z-50 text-xs">
               <div className="p-2 border-b border-slate-800 text-slate-300">
-                <p className="font-bold text-white truncate">{currentUser?.name || 'Administrator'}</p>
-                <p className="text-[10px] text-cyan-400 font-mono">LEVEL 4 SECURITY</p>
+                <p className="font-bold text-white truncate">{currentUser?.name || 'Authorized Creator'}</p>
+                <p className="text-[10px] text-cyan-400 font-mono truncate">{currentUser?.email || 'Authenticated User'}</p>
+                <span className="inline-block mt-1 text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-700">
+                  {currentUser?.role || 'CREATOR'}
+                </span>
               </div>
               <div className="py-1">
                 {currentUser ? (

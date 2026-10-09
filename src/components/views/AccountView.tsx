@@ -12,10 +12,12 @@ import {
   ExternalLink,
   Sliders,
   Sparkles,
+  ShieldAlert,
 } from 'lucide-react';
 import { getCurrentUser, GodseyeUser } from '../../services/authService';
 import { GodsEyeLogo } from '../GodsEyeLogo';
 import { V2NavigationTab } from '../../types';
+import { AuthorizedEmailsManager } from './AuthorizedEmailsManager';
 
 interface AccountViewProps {
   currentUser?: GodseyeUser | null;
@@ -71,13 +73,13 @@ export const AccountView: React.FC<AccountViewProps> = ({
             />
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-white tracking-wide">{user?.name || 'Andy Crepto'}</h2>
+                <h2 className="text-xl font-bold text-white tracking-wide">{user?.name || 'Creator'}</h2>
                 <ShieldCheck className="w-4 h-4 text-cyan-400" />
               </div>
-              <p className="text-xs text-slate-400 font-mono">{user?.email || 'andycrepto@gmail.com'}</p>
+              <p className="text-xs text-slate-400 font-mono">{user?.email || 'No email'}</p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-700/60 font-mono text-[10px] font-bold">
-                  {user?.role || 'CREATOR COMMANDER'}
+                  {user?.role || 'CREATOR'}
                 </span>
                 <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" /> SESSION VERIFIED
@@ -172,6 +174,9 @@ export const AccountView: React.FC<AccountViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* GOD'S EYE V3.0 PRIVATE ALLOWLIST MANAGEMENT (ADMIN / OWNER SECTION) */}
+      <AuthorizedEmailsManager currentUser={user} />
     </div>
   );
 };

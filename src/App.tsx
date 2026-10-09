@@ -47,6 +47,7 @@ import {
   getCurrentUser,
   saveUserSession,
   clearUserSession,
+  validateServerSession,
   GodseyeUser,
 } from './services/authService';
 import { DashboardView } from './components/views/DashboardView';
@@ -135,6 +136,18 @@ export default function App() {
   useEffect(() => {
     applyThemeToDOM(themeSettings);
   }, [themeSettings]);
+
+  // Validate server session & allowlist access on startup
+  useEffect(() => {
+    validateServerSession().then((verifiedUser) => {
+      if (verifiedUser) {
+        setCurrentUser(verifiedUser);
+      } else if (currentUser) {
+        // If server session invalid, reset user so login screen forces re-verification
+        setCurrentUser(null);
+      }
+    });
+  }, []);
 
   const handleThemeChange = (updated: ThemeSettings) => {
     setThemeSettings(updated);
@@ -1210,6 +1223,7 @@ export default function App() {
               <SettingsView
                 onOpenThemeModal={() => setIsThemeModalOpen(true)}
                 onNavigate={setActiveTab}
+                currentUser={currentUser}
               />
             )}
             </main>

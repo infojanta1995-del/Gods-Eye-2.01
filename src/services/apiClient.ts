@@ -1,7 +1,22 @@
 import { StudioConfig, GodseyeAiResult } from '../types';
+import { getStoredAuthToken } from './authService';
 
 export interface GenerateContentRequest {
   config: StudioConfig;
+}
+
+/**
+ * Returns common request headers including authorization bearer token if logged in
+ */
+function getAuthHeaders(extraHeaders: Record<string, string> = {}): Record<string, string> {
+  const token = getStoredAuthToken();
+  const headers: Record<string, string> = {
+    ...extraHeaders,
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 }
 
 export interface GenerateContentResponse {
@@ -103,9 +118,9 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/generate-content', {
         method: 'POST',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify({ config }),
       });
 
@@ -141,9 +156,9 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/regenerate-component', {
         method: 'POST',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify({ component, config, currentResult, options }),
       });
 
@@ -177,9 +192,9 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/auto-improve-script', {
         method: 'POST',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify(params),
       });
 
@@ -211,7 +226,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/research/analyze', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(params),
       });
       const json = await res.json();
@@ -235,7 +250,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/assistant/command', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(params),
       });
       const json = await res.json();
@@ -272,7 +287,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/thumbnail/generate-custom', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           topic: params.topic,
           storyContent: params.storyContent || params.story || '',
@@ -330,7 +345,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/thumbnail/generate-image', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(params),
       });
 
@@ -374,7 +389,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/seo/generate-custom', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           title: params.title || params.topic || 'High Stakes Investigation',
           storyContent: params.storyContent || params.script || '',
@@ -412,7 +427,7 @@ export const GODSEYE_API = {
     try {
       const res = await fetch('/api/publishing/prepare-and-publish', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           platform: params.platform,
           projectId: params.projectId,
